@@ -27,22 +27,16 @@ typedef struct {
     char *str;
 } string_; typedef string_ *string;
 
+void print_object(object o);
+
+void print_and_exit(char *str, object o) {
+    printf("%s\n", str);
+    /* print_object(o); */
+    exit(1);
+}
+
 void *allocate(size_t size) {
     return malloc(size);
-}
-
-number new_number(long long value) {
-    number_ *number = allocate(sizeof(number_));
-    number->value = value;
-    return number;
-}
-
-string new_string(char *str) {
-    size_t str_len = strlen(str);
-    string_ *s = allocate(sizeof(string_));
-    s->str = allocate(str_len);
-    strcpy(s->str, str);
-    return s;
 }
 
 object new_object(void *pointer, object_type type) {
@@ -52,26 +46,44 @@ object new_object(void *pointer, object_type type) {
     return o;
 }
 
-pair cons(object car, object cdr)
+object new_number(long long value) {
+    number_ *number = allocate(sizeof(number_));
+    number->value = value;
+    return new_object(number, number_type);
+}
+
+object new_string(char *str) {
+    size_t str_len = strlen(str);
+    string_ *s = allocate(sizeof(string_));
+    s->str = allocate(str_len);
+    strcpy(s->str, str);
+    return new_object(s, string_type);
+}
+
+object cons(object car, object cdr)
 {
     pair_ *p = allocate(sizeof(pair_));
     p->car = car;
     p->cdr = cdr;
-    return p;
-}
-
-void print_pair(pair p);
-
-object car(pair p) {
-    return p->car;
-}
-
-object cdr(pair p) {
-    return p->cdr;
+    return new_object(p, pair_type);
 }
 
 object_type type(object o) {
     return o->type;
+}
+
+object car(object o) {
+    if (pair_type == type(o))
+        return ((pair)o->pointer)->car;
+    else
+        print_and_exit("object is not of type pair", o);
+}
+
+object cdr(object o) {
+    if (pair_type == type(o))
+        return ((pair)o->pointer)->cdr;
+    else
+        print_and_exit("object is not of type pair", o);
 }
 
 void print_number(number number) {
@@ -82,13 +94,14 @@ void print_string(string s) {
     printf("%s", s->str);
 }
 
-void print_object(object o) {
+/* shitty name; _low stands for the last function in the chain of printing object functions */
+void print_object_low(object o) {
     switch(type(o)) {
     case number_type:
         print_number((number)o->pointer);
         break;
     case pair_type:
-        print_pair((pair)o->pointer);
+        print_object(o);
         break;
     case string_type:
         print_string((string)o->pointer);
@@ -98,31 +111,33 @@ void print_object(object o) {
     }
 }
 
-void print_pair(pair p) {
-    printf("(");
-    print_object(car(p));
-    printf(" ");
-    print_object(cdr(p));
-    printf(")");
+void print_object(object o) {
+    if (pair_type == type(o)) {
+        printf("(");
+        print_object_low(car(o));
+        printf(" ");
+        print_object_low(cdr(o));
+        printf(")");
+    }
+    else
+        print_object_low(o);
 }
 
-void print_pair_main(pair p) {
-    print_pair(p);
+void print_object_main(object o) {
+    print_object(o);
     printf("\n");
 }
 
 int main(void) {
-    number number5  = new_number( 5);
-    string whatever = new_string("whatever");
-    number number10 = new_number(10);
-    number number15 = new_number(15);
+    object number5  = new_number( 5);
+    object whatever = new_string("whatever");
+    object number10 = new_number(10);
+    object number15 = new_number(15);
     
-    pair p1 = cons(new_object(number5, number_type),
-                   new_object(whatever, string_type));
-    
-    pair p2 = cons(new_object(number15, number_type),
-                   new_object(p1, pair_type));
-    print_pair_main(p2);
+    object o1 = cons(number5, whatever);
+    object o2 = cons(number15, o1);
+
+    print_object_main(o2);
     
     return 0;
 }
