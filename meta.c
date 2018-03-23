@@ -24,16 +24,16 @@ typedef pair_ *pair;
 
 typedef struct {
     int value;
-} number_object_;
+} number_;
 
-typedef number_object_ *number_object;
+typedef number_ *number;
 
 void *allocate(size_t size) {
     return malloc(size);
 }
 
-number_object new_number(long long value) {
-    number_object_ *number = allocate(sizeof(number_object_));
+number new_number(long long value) {
+    number_ *number = allocate(sizeof(number_));
     number->value = value;
     return number;
 }
@@ -67,14 +67,14 @@ object_type type(object o) {
     return o->type;
 }
 
-void print_number(number_object number) {
+void print_number(number number) {
     printf("%d", number->value);
 }
 
 void print_object(object o) {
     switch(type(o)) {
     case number_type:
-        print_number((number_object)o->pointer);
+        print_number((number)o->pointer);
         break;
     case pair_type:
         print_pair((pair)o->pointer);
@@ -98,9 +98,9 @@ void print_pair_main(pair p) {
 }
 
 int main(void) {
-    number_object number5  = new_number( 5);
-    number_object number10 = new_number(10);
-    number_object number15 = new_number(15);
+    number number5  = new_number( 5);
+    number number10 = new_number(10);
+    number number15 = new_number(15);
     
     pair p1 = cons(new_object(number5, number_type),
                    new_object(number10, number_type));
