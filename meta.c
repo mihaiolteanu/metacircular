@@ -3,56 +3,74 @@
 
 typedef enum {
     number_type,                /* The value can be directly converted to a number. */
+    string_type,
+    symbol_type,
     pair_type,                  /* Pointer to another cons */
 } object_type;
 
 typedef struct {
-    long value;
-} number_object;
+    void *pointer;
+    object_type type;
+} object;
 
 typedef struct {
-    void *car;
-    object_type car_type;
-    void *cdr;
-    object_type cdr_type;
+    object *car;
+    object *cdr;
 } pair;
 
-void print_pair(pair *p);
+typedef struct {
+    int value;
+} number_object;
 
-void *car(pair *p) {
-    return p->car;
+void *allocate(size_t size) {
+    return malloc(size);
 }
 
-object_type car_type(pair *p) {
-    return p->car_type;
+number_object *new_number(long long value) {
+    number_object *number = allocate(sizeof(number_object));
+    number->value = value;
+    return number;
 }
 
-void *cdr(pair *p) {
-    return p->cdr;
+object *new_object(void *pointer, object_type type) {
+    object *o = allocate(sizeof(object));
+    o->pointer = pointer;
+    o->type = type;
 }
 
-object_type cdr_type(pair *p) {
-    return p->cdr_type;
-}
-
-pair cons(void *car, object_type car_type,
-          void *cdr, object_type cdr_type)
+pair *cons(object *car, object *cdr)
 {
-    pair p = {car, car_type, cdr, cdr_type};
+    pair *p = allocate(sizeof(pair));
+    p->car = car;
+    p->cdr = cdr;
     return p;
 }
 
-void print_number(void *object) {
-    printf("%d", (int)object);
+void print_pair(pair *p);
+
+object *car(pair *p) {
+    return p->car;
 }
 
-void print_object(void *object, object_type type) {
-    switch(type) {
+object *cdr(pair *p) {
+    return p->cdr;
+}
+
+object_type type(object *o) {
+    return o->type;
+}
+
+void print_number(number_object *number) {
+    printf("%d", number->value);
+}
+
+void print_object(object *o) {
+    switch(type(o)) {
     case number_type:
-        print_number(object);
+        print_number((number_object *)o->pointer);
         break;
     case pair_type:
-        print_pair((pair *)object);
+        print_pair((pair *)o->pointer);
         break;
     default:
         break;
@@ -61,9 +79,9 @@ void print_object(void *object, object_type type) {
 
 void print_pair(pair *p) {
     printf("(");
-    print_object(car(p), car_type(p));
+    print_object(car(p));
     printf(" ");
-    print_object(cdr(p), cdr_type(p));
+    print_object(cdr(p));
     printf(")");
 }
 
@@ -73,11 +91,16 @@ void print_pair_main(pair *p) {
 }
 
 int main(void) {
-    pair p1 = cons((void *)5, number_type,
-                   (void *)10, number_type);
-    pair p2 = cons((void *)15, number_type,
-                   (void *)&p1, pair_type);
-    print_pair_main(&p2);
+    number_object *number5  = new_number( 5);
+    number_object *number10 = new_number(10);
+    number_object *number15 = new_number(15);
+    
+    pair *p1 = cons(new_object(number5, number_type),
+                    new_object(number10, number_type));
+
+    pair *p2 = cons(new_object(number15, number_type),
+                    new_object(p1, pair_type));
+    print_pair_main(p2);
     
     return 0;
 }
