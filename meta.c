@@ -3,7 +3,7 @@
 
 typedef enum {
     number_type,                /* The value can be directly converted to a number. */
-    cons_cell_type,             /* Pointer to another cons */
+    pair_type,                  /* Pointer to another cons */
 } object_type;
 
 typedef struct {
@@ -15,67 +15,69 @@ typedef struct {
     object_type car_type;
     void *cdr;
     object_type cdr_type;
-} cons_cell;
+} pair;
 
-void *car(cons_cell *cell) {
-    return cell->car;
+void print_pair(pair *p);
+
+void *car(pair *p) {
+    return p->car;
 }
 
-object_type car_type(cons_cell *cell) {
-    return cell->car_type;
+object_type car_type(pair *p) {
+    return p->car_type;
 }
 
-void *cdr(cons_cell *cell) {
-    return cell->cdr;
+void *cdr(pair *p) {
+    return p->cdr;
 }
 
-object_type cdr_type(cons_cell *cell) {
-    return cell->cdr_type;
+object_type cdr_type(pair *p) {
+    return p->cdr_type;
 }
 
-cons_cell cons(void *car, object_type car_type,
-               void *cdr, object_type cdr_type)
+pair cons(void *car, object_type car_type,
+          void *cdr, object_type cdr_type)
 {
-    cons_cell cell = {car, car_type, cdr, cdr_type};
-    return cell;
+    pair p = {car, car_type, cdr, cdr_type};
+    return p;
 }
 
-void print_number(void *cell) {
-    printf("%d", (int)cell);
+void print_number(void *object) {
+    printf("%d", (int)object);
 }
 
-void print_cell(void *cell, object_type type) {
+void print_object(void *object, object_type type) {
     switch(type) {
     case number_type:
-        print_number(cell);
+        print_number(object);
         break;
-    case cons_cell_type:
-        print_cons(cell);
+    case pair_type:
+        print_pair((pair *)object);
         break;
     default:
         break;
     }
 }
 
-void print_cons(cons_cell *cell) {
+void print_pair(pair *p) {
     printf("(");
-    print_cell(car(cell), car_type(cell));
+    print_object(car(p), car_type(p));
     printf(" ");
-    print_cell(cdr(cell), cdr_type(cell));
+    print_object(cdr(p), cdr_type(p));
     printf(")");
 }
 
-void print_cons_main(cons_cell *cell) {
-    print_cons(cell);
+void print_pair_main(pair *p) {
+    print_pair(p);
     printf("\n");
 }
 
 int main(void) {
-    cons_cell cell = cons((void *)5, number_type,
-                          (void *)10, number_type);
-    cons_cell cell2 = cons((void *)15, number_type,
-                           (void *)&cell, cons_cell_type);
-    print_cons_main(&cell2);
+    pair p1 = cons((void *)5, number_type,
+                   (void *)10, number_type);
+    pair p2 = cons((void *)15, number_type,
+                   (void *)&p1, pair_type);
+    print_pair_main(&p2);
     
     return 0;
 }
