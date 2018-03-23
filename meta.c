@@ -26,7 +26,9 @@ typedef struct {
     int value;
 } number_;
 
-typedef number_ *number;
+typedef struct {
+    char *str;
+} string_; typedef string_ *string;
 
 void *allocate(size_t size) {
     return malloc(size);
@@ -36,6 +38,14 @@ number new_number(long long value) {
     number_ *number = allocate(sizeof(number_));
     number->value = value;
     return number;
+}
+
+string new_string(char *str) {
+    size_t str_len = strlen(str);
+    string_ *s = allocate(sizeof(string_));
+    s->str = allocate(str_len);
+    strcpy(s->str, str);
+    return s;
 }
 
 object new_object(void *pointer, object_type type) {
@@ -71,6 +81,10 @@ void print_number(number number) {
     printf("%d", number->value);
 }
 
+void print_string(string s) {
+    printf("%s", s->str);
+}
+
 void print_object(object o) {
     switch(type(o)) {
     case number_type:
@@ -78,6 +92,9 @@ void print_object(object o) {
         break;
     case pair_type:
         print_pair((pair)o->pointer);
+        break;
+    case string_type:
+        print_string((string)o->pointer);
         break;
     default:
         break;
@@ -99,11 +116,12 @@ void print_pair_main(pair p) {
 
 int main(void) {
     number number5  = new_number( 5);
+    string whatever = new_string("whatever");
     number number10 = new_number(10);
     number number15 = new_number(15);
     
     pair p1 = cons(new_object(number5, number_type),
-                   new_object(number10, number_type));
+                   new_object(whatever, string_type));
     
     pair p2 = cons(new_object(number15, number_type),
                    new_object(p1, pair_type));
