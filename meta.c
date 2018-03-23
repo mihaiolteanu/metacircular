@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef enum {
     number_type,                /* The value can be directly converted to a number. */
@@ -11,20 +12,16 @@ typedef enum {
 typedef struct {
     void *pointer;
     object_type type;
-} object_;
-
-typedef object_ *object;
+} object_; typedef object_ *object;
 
 typedef struct {
     object car;
     object cdr;
-} pair_;
-
-typedef pair_ *pair;
+} pair_; typedef pair_ *pair;
 
 typedef struct {
     int value;
-} number_;
+} number_; typedef number_ *number;
 
 typedef struct {
     char *str;
