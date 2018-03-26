@@ -128,7 +128,7 @@ void print_object(object o, bool open_parens) {
         if (true == open_parens)
             printf("(");
         else
-            ;//printf(" ");
+            ;
         print_object_low(car(o));
         rest = cdr(o);
         if (pair_type == type(rest))
@@ -337,26 +337,34 @@ object eval_expression(char *exp) {
     }
 }
 
-int main(void) {
-    /* Init the nil object */
+object exp_from_stdin(void) {
     nil = new_object(NULL, null_type);
-    object number5  = new_number( 5);
-    object whatever = new_string("whatever");
-    object number10 = new_number(10);
-    object number15 = new_number(15);
-    
-    object o1 = cons(number15,
-                     cons(number5, whatever));
-    object o2 = cons(number5,
-                     cons(number10, nil));
-    object o3 = cons(number5, number10);
-    /* object o4 = cons(number5, cons(number10, nil) ); */
-    object o4 = cons(number5, cons(cons(number10, number15), nil));
+    char *line = NULL;
+    char *exp = NULL;
+    size_t total = 0;
+    size_t len = 0;
+    ssize_t read;
 
-    print_object_main(o1);
-    print_object_main(o2);
-    print_object_main(o3);
-    print_object_main(o4);
+    while ((read = getline(&line, &len, stdin)) != -1) {
+        total = total + read;
+        exp = realloc(exp, total);
+        strcpy(exp + (total - read), line);
+    }
+    object o = eval_expression(exp);
+    free(exp);
+    return o;
+}
+
+void init(void) {
+    nil = new_object(NULL, null_type);
+    setvbuf(stdout, NULL, _IONBF, 0); /* Disable stdout buffering. */
+}
+
+int main(void) {
+    init();
+
+    /* object o = exp_from_stdin(); */
+    /* print_object_main(o); */
 
     char exp[] = "(+ 1 (+ 2 3))";
     object o = eval_expression(exp);
