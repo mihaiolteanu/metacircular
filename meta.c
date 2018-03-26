@@ -34,7 +34,7 @@ typedef struct {
 } environment_; typedef environment_ *environment;
 
 object nil;
-void print_object(object o);
+void print_object(object o, bool open_parens);
 
 void print_and_exit(char *str, object o) {
     printf("%s\n", str);
@@ -108,7 +108,10 @@ void print_object_low(object o) {
         print_number((number)o->pointer);
         break;
     case pair_type:
-        print_object(o);
+        if (pair_type == type(car(o)))
+            print_object(o, true);
+        else
+            print_object(o, false);
         break;
     case string_type:
         print_string((string)o->pointer);
@@ -118,20 +121,31 @@ void print_object_low(object o) {
     }
 }
 
-void print_object(object o) {
+void print_object(object o, bool open_parens) {
+    object rest;
     if (pair_type == type(o)) {
-        printf("(");
+        if (true == open_parens)
+            printf("(");
+        else
+            ;//printf(" ");
         print_object_low(car(o));
-        printf(" ");
+        rest = cdr(o);
+        if (pair_type == type(rest))
+            printf(" ");
+        else if (null_type == type(rest))
+            ;
+        else
+            printf(" . ");
         print_object_low(cdr(o));
-        printf(")");
+        if (true == open_parens)
+            printf(")");
     }
     else
         print_object_low(o);
 }
 
 void print_object_main(object o) {
-    print_object(o);
+    print_object(o, true);
     printf("\n");
 }
 
