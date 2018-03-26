@@ -272,7 +272,7 @@ object eval(object exp, environment env) {
     /*                       env), */
     /*                  list_of_values(operands(exp), */
     /*                                 env)); */
-    error("Unknown expression type: EVAL", exp);
+    print_and_exit("Unknown expression type: EVAL", exp);
     return 0;
 }
 
@@ -345,10 +345,22 @@ int main(void) {
     object number10 = new_number(10);
     object number15 = new_number(15);
     
-    object o1 = cons(number5, whatever);
-    object o2 = cons(number15, o1);
+    object o1 = cons(number15,
+                     cons(number5, whatever));
+    object o2 = cons(number5,
+                     cons(number10, nil));
+    object o3 = cons(number5, number10);
+    /* object o4 = cons(number5, cons(number10, nil) ); */
+    object o4 = cons(number5, cons(cons(number10, number15), nil));
 
+    print_object_main(o1);
     print_object_main(o2);
-    
+    print_object_main(o3);
+    print_object_main(o4);
+
+    char exp[] = "(+ 1 (+ 2 3))";
+    object o = eval_expression(exp);
+    print_object_main(o);
+
     return 0;
 }
