@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 typedef enum {
     number_type,                /* The value can be directly converted to a number. */
@@ -285,6 +286,56 @@ object eval(object exp, environment env) {
     /*                                             (procedure_environment(proc)))); */
     /* error("Unknown procedure type: APPLY", procedure); */
 /* } */
+
+bool is_number(char *str) {
+    bool result = true;
+    for (int i = 0; i < strlen(str); i++) {
+        if (!isdigit(str[i]))
+            result = false;
+    }
+    return result;
+}
+
+bool is_string(char *str) {
+    size_t len;
+    if ((str[0] == '"') && (str[len-1] == '"'))
+        return true;
+    return false;
+}
+
+object object_from_token(char *token) {
+    object o;
+    if (is_number(token))
+        o = new_number(atoi(token));
+    if (is_string(token))
+        o = new_string(token);
+    else
+        o = new_string(token);
+    return o;
+}
+
+/* §§§ Input handling */
+object eval_expression(char *exp) {
+    char *token;
+    object o;
+    static bool first = true;
+    if (true == first) {
+        token = strtok(exp, "( )");
+        first = false;
+    }
+    else
+        token = strtok(NULL, "( )");
+    if (NULL != token) {
+        o = object_from_token(token);
+        if (*(token-1) == '(')  /* New cons, where car is a pair */
+            return cons(cons(o, eval_expression(exp)), nil);
+        return cons(o, eval_expression(exp));
+    }
+    else {
+        first = true;           /* Prepare for the next expression */
+        return nil;
+    }
+}
 
 int main(void) {
     /* Init the nil object */
