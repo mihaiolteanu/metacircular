@@ -7,6 +7,7 @@ typedef enum {
     string_type,
     symbol_type,
     pair_type,                  /* Pointer to another cons */
+    null_type,                  /* Used by nil object */
 } object_type;
 
 typedef struct {
@@ -27,6 +28,7 @@ typedef struct {
     char *str;
 } string_; typedef string_ *string;
 
+object nil;
 void print_object(object o);
 
 void print_and_exit(char *str, object o) {
@@ -129,6 +131,8 @@ void print_object_main(object o) {
 }
 
 int main(void) {
+    /* Init the nil object */
+    nil = new_object(NULL, null_type);
     object number5  = new_number( 5);
     object whatever = new_string("whatever");
     object number10 = new_number(10);
