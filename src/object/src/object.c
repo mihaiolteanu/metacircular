@@ -1,12 +1,24 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include "object.h"
 
-object nil;
+typedef enum {
+    Tcons_cell,
+    Tnumber,
+    Tnull,
+} Tobject;
 
-typedef struct {
-    int value;
-} number_;
-typedef number_ *number;
+static bool is_equal_type(Tobject t1, Tobject t2) {
+    return t1 == t2;
+}
+
+typedef struct object__ {
+    Tobject T;                  /* object type */
+    void *value;
+    struct object__ *car;
+    struct object__ *cdr;
+} object_;
+object nil;
 
 static object new_object(Tobject T, void *value, object car, object cdr) {
     object o = malloc(sizeof(object_));
@@ -33,20 +45,29 @@ object cdr(object o) {
     exit(1);
 }
 
+/* §§§ Numbers */
+typedef struct {
+    int value;
+} number_;
+typedef number_ *number;
+
 object new_number(int value) {
     number n = malloc(sizeof(number_));
     n->value = value;
     return new_object(Tnumber, (void *)n, NULL, NULL);
 }
 
+bool is_number(object o) {
+    return is_equal_type(o->T, Tnumber);
+}
+
+int number_value(object o) {
+    if (is_number(o))
+        return ((number)o->value)->value;
+}
+
 void object_init(void) {
     nil->T = Tnull;
     nil->car = NULL;
     nil->cdr = NULL;
-}
-
-int main(void) {
-    object_init();
-
-    return 0;
 }

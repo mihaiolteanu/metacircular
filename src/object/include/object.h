@@ -1,19 +1,12 @@
-typedef enum {
-    Tcons_cell,
-    Tnumber,
-    Tnull,
-} Tobject;
+#include <stdbool.h>
 
-typedef struct object__ {
-    Tobject T;                  /* object type */
-    void *value;
-    struct object__ *car;
-    struct object__ *cdr;
-} object_;
-typedef object_ *object;
+typedef struct object__ *object;
 
+extern void   object_init(void);
 extern object cons(object car, object cdr);
-extern object car(object o);
-extern object cdr(object o);
+extern object car (object o);
+extern object cdr (object o);
+
 extern object new_number(int value);
-extern void object_init(void);
+extern bool   is_number(object o);
+extern int    number_value(object o);
