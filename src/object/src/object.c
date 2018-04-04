@@ -14,34 +14,32 @@ static bool is_equal_type(Tobject t1, Tobject t2) {
 
 typedef struct object__ {
     Tobject T;                  /* object type */
-    void *value;
-    struct object__ *car;
-    struct object__ *cdr;
+    void *slot_1;
+    void *slot_2;
 } object_;
 object nil;
 
-static object new_object(Tobject T, void *value, object car, object cdr) {
+static object new_object(Tobject T, void *slot_1, void *slot_2) {
     object o = malloc(sizeof(object_));
     o->T = T;
-    o->value = value;
-    o->car = car;
-    o->cdr = cdr;
+    o->slot_1 = slot_1;
+    o->slot_2 = slot_2;
     return o;
 }
 
 object cons(object car, object cdr) {
-    return new_object(Tcons_cell, NULL, car, cdr);
+    return new_object(Tcons_cell, (void *)car, (void *)cdr);
 }
 
 object car(object o) {
     if (Tcons_cell == o->T)
-        return o->car;
+        return (object)(o->slot_1);
     exit(1);
 }
 
 object cdr(object o) {
     if (Tcons_cell == o->T)
-        return o->cdr;
+        return (object)(o->slot_2);
     exit(1);
 }
 
@@ -54,7 +52,7 @@ typedef number_ *number;
 object new_number(int value) {
     number n = malloc(sizeof(number_));
     n->value = value;
-    return new_object(Tnumber, (void *)n, NULL, NULL);
+    return new_object(Tnumber, (void *)n, NULL);
 }
 
 bool is_number(object o) {
@@ -63,7 +61,7 @@ bool is_number(object o) {
 
 int number_value(object o) {
     if (is_number(o))
-        return ((number)o->value)->value;
+        return ((number)o->slot_1)->value;
 }
 
 void object_init(void) {
