@@ -64,8 +64,13 @@ int number_value(object o) {
         return ((number)o->slot_1)->value;
 }
 
-void object_init(void) {
-    nil->T = Tnull;
-    nil->car = NULL;
-    nil->cdr = NULL;
+object add_numbers(object o1, object o2) {
+    if (is_number(o1) && is_number(o2)) {
+        return new_number(
+            number_value(o1) +
+            number_value(o2));
+    }
+    exit(1);
+}
+    
 }
