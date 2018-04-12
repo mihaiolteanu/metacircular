@@ -73,4 +73,7 @@ object add_numbers(object o1, object o2) {
     exit(1);
 }
     
+/* §§§ Nil object */
+bool is_object_nil(object o) {
+    return o == NULL;
 }
