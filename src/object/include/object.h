@@ -8,6 +8,7 @@ extern object nil;
 
 extern void   object_init(void);
 extern object cons(object car, object cdr);
+extern bool   is_cons(object o);
 extern object car (object o);
 extern object cdr (object o);
 

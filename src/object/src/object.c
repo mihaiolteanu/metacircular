@@ -31,14 +31,18 @@ object cons(object car, object cdr) {
     return new_object(Tcons_cell, (void *)car, (void *)cdr);
 }
 
+bool is_cons(object o) {
+    return (Tcons_cell == o->T);
+}
+
 object car(object o) {
-    if (Tcons_cell == o->T)
+    if (is_cons(o))
         return (object)(o->slot_1);
     exit(1);
 }
 
 object cdr(object o) {
-    if (Tcons_cell == o->T)
+    if (is_cons(o))
         return (object)(o->slot_2);
     exit(1);
 }

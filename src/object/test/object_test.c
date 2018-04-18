@@ -11,6 +11,15 @@ void test_cons_preserves_car_and_cdr() {
     TEST_ASSERT_EQUAL_INT64(n2_cdr, n2);
 }
 
+void test_is_cons() {
+    object o1 = new_number(1);
+    object o2 = new_number(2);
+    object c = cons(o1, o2);
+    TEST_ASSERT_FALSE(is_cons(o1));
+    TEST_ASSERT_FALSE(is_cons(o2));
+    TEST_ASSERT_TRUE(is_cons(c));
+}
+
 void test_number_object_create() {
     int value = 123;
     object o = new_number(value);
