@@ -47,6 +47,26 @@ object cdr(object o) {
     exit(1);
 }
 
+typedef struct {
+    char *name;
+} identifier_;
+typedef identifier_ *identifier;
+
+object new_identifier(char *name) {
+    identifier id = malloc(sizeof(identifier_));
+    id->name = malloc(strlen(name));
+    strcpy(id->name, name);
+    return new_object(Tidentifier, (void *)id, NULL);
+}
+
+bool is_identifier(object o) {
+    return is_equal_type(o->T, Tidentifier);
+}
+
+char *identifier_name(object o) {
+    if (is_identifier(o))
+        return ((identifier)(o->slot_1))->name;
+}
 /* §§§ Numbers */
 typedef struct {
     int value;

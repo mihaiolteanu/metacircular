@@ -40,3 +40,8 @@ void test_number_add_numbers() {
 }
 
 
+void test_identifier() {
+    object o = new_identifier("myvar");
+    TEST_ASSERT_TRUE(is_identifier(o));
+    TEST_ASSERT_EQUAL_STRING(identifier_name(o), "myvar");
+}

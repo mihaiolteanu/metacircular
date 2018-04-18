@@ -17,4 +17,8 @@ extern bool   is_number(object o);
 extern int    number_value(object o);
 extern object add_numbers(object o1, object o2);
 
+extern object new_identifier(char *name);
+extern bool   is_identifier(object o);
+extern char  *identifier_name(object o);
+
 #endif
