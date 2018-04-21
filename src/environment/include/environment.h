@@ -1,12 +1,13 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
-#include "object.h"
 
 typedef struct symbol__ *symbol;
 typedef struct environment__  *environment;
 
 extern symbol null_symbol;
 extern environment null_environment;
+
+#include "object.h"
 
 /* Create a new symbol associated with the given object in the given environment */
 extern symbol define_symbol(char *name, object o, environment env);

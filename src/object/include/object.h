@@ -1,10 +1,11 @@
 #ifndef OBJECT_H
 #define OBJECT_H
-
 #include <stdbool.h>
 
 typedef struct object__ *object;
 extern object nil;
+
+#include "environment.h"
 
 extern void   object_init(void);
 extern object cons(object car, object cdr);

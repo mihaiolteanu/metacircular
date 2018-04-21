@@ -3,6 +3,7 @@ project(object C)
 include(create_test)
 
 add_library(object src/object.c)
+target_link_libraries(object environment)
 target_include_directories(object PUBLIC  include)
 target_include_directories(object PRIVATE src)
 
