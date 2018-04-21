@@ -3,3 +3,4 @@ project(metacircular_modules C)
 
 add_subdirectory(object)
 add_subdirectory(environment)
+add_subdirectory(evaluator)
