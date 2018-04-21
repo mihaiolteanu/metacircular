@@ -1,8 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "evaluator.h"
-#include "object.h"
-#include "environment.h"
+#include "base.h"
 
 static bool is_definition(object expr) {
     object expr_car;
@@ -29,7 +28,7 @@ static void eval_definition(object expr, environment env) {
     if (!is_identifier(expr_cadr))
         exit(1);                /* Invalid definition (e.g, (define 5 10)) */
     id_name = identifier_name(expr_cadr);
-    define_symbol(id_name, expr_caddr, env);
+    define(id_name, expr_caddr, env);
 }
 
 void eval(object expr, environment env) {
