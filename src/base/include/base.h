@@ -29,6 +29,8 @@ extern void   define(char *name, object o, environment env);
 extern object find(char *name, environment env);
 /* Reasign the given identifier to point to a new object in the given environment. */
 extern void   redefine(object identifier, object o, environment env);
+/* Create a new identifier but don't assign it to anything yet. */
+extern object new_identifier(char *name);
 extern bool   is_identifier(object o);
 extern char  *identifier_name(object o);
 extern object identifier_object(object identifier);

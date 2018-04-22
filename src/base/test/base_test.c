@@ -39,6 +39,13 @@ void test_number_add_numbers() {
     TEST_ASSERT_EQUAL(number_value(sum), 10);
 }
 
+void test_new_identifier() {
+    object id = new_identifier("define");
+    TEST_ASSERT_TRUE(is_identifier(id));
+    char *id_name = identifier_name(id);
+    TEST_ASSERT_EQUAL_STRING("define", id_name);
+}
+
 void test_extend_the_null_environment(void) {
     environment env = extend_environment(null_environment);
     TEST_ASSERT_NOT_EQUAL(env, null_environment);

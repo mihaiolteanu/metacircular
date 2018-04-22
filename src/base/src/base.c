@@ -93,6 +93,11 @@ void define(char *name, object o, environment env) {
     store(id, env);
 }
 
+object new_identifier(char *name) {
+    identifier id = new_id(name, nil);
+    return new_object(Tidentifier, (void *)id, NULL);
+}
+
 /* Search for a symbol with name in the given list of symbols. */
 static identifier find_id_in_frame(char *name, identifier ids) {
     if ((NULL == ids) || (0 == strcmp(name, ids->name)))
