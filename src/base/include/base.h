@@ -16,6 +16,7 @@ extern object cons(object car, object cdr);
 extern bool   is_cons(object o);
 extern object car (object o);
 extern object cdr (object o);
+extern unsigned int length(object list);
 
 /* Numbers and arithmetic on numbers. */
 extern object new_number(int value);
@@ -39,6 +40,9 @@ extern object identifier_object(object identifier);
 extern environment extend_environment(environment base_env);
 
 /* Functions. */
-extern object new_function(char **formal_args, object *body, environment env);
+extern object new_lambda(char **formal_args, object *body);
+extern bool   is_lambda(object expr);
+extern char **formal_args_lambda(object lambda);
+extern object *body_lambda(object lambda);
 
 #endif

@@ -20,6 +20,17 @@ void test_is_cons() {
     TEST_ASSERT_TRUE(is_cons(c));
 }
 
+void test_list_length() {
+    /* '(+ 1 2)' */
+    object id = new_identifier("+");
+    object n1 = new_number(1);
+    object n2 = new_number(2);
+    object addition = cons(id, cons(n1, cons(n2, nil)));
+    unsigned int exp_len = length(addition);
+    TEST_ASSERT_EQUAL(3, exp_len);
+    TEST_ASSERT_EQUAL(0, nil);
+}
+
 void test_number_object_create() {
     int value = 123;
     object o = new_number(value);

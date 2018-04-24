@@ -3,6 +3,6 @@
 
 #include "base.h"
 
-extern void eval(object expr, environment env);
+extern object eval(object expr, environment env);
 
 #endif

@@ -52,12 +52,28 @@ object cdr(object o) {
     exit(1);
 }
 
+unsigned int length(object list) {
+    unsigned int res = 0;
+    while (nil != list) {
+        res++;
+        list = cdr(list);
+    }
+    return res;
+}
+
 typedef struct identifier__ {
     char *name;
     object o;
     struct identifier__ *next;  /* Helpful to store multiple identifiers in environments. */
 } identifier_;
 typedef identifier_ *identifier;
+
+typedef struct {
+    char **formal_args;
+    object *body;               /* Multiple objects are allowed as a body */
+    environment env;
+} function_;
+typedef function_ *function;
 
 typedef struct environment__ {
     identifier id_list;             /* Each environment has a list of identifiers */
@@ -90,6 +106,9 @@ static void store(identifier id, environment env) {
 
 void define(char *name, object o, environment env) {
     identifier id = new_id(name, o);
+    if (is_lambda(o))
+        /* Attach an environment to lambda making this a function definition. */
+        ((function)(o->slot_1))->env = env;
     store(id, env);
 }
 
@@ -138,19 +157,23 @@ environment extend_environment(environment base_env) {
 }
 
 /* §§§ Functions */
-typedef struct {
-    char **formal_args;
-    object *body;               /* Multiple objects are allowed as a body */
-    environment env;
-} function_;
-typedef function_ *function;
-
-object new_function(char **formal_args, object *body, environment env) {
+object new_lambda(char **formal_args, object *body) {
     function f = malloc(sizeof(function_));
     f->formal_args = formal_args;
     f->body = body;
-    f->env = env;
     return new_object(Tfunction, (void *)f, NULL);
+}
+
+bool is_lambda(object expr) {
+    return is_equal_type(expr->T, Tfunction);
+}
+
+char **formal_args_lambda(object lambda) {
+    return ((function)(lambda->slot_1))->formal_args;
+}
+
+object *body_lambda(object lambda) {
+    return ((function)(lambda->slot_1))->body;
 }
 
 /* §§§ Numbers */
