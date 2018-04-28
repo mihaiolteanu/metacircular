@@ -52,21 +52,24 @@ static object _parse(char *input) {
     if (*input == '(') {
         char *p1, *p2, *rest;
         rest = malloc(100);
-        p1 = strstr(input, "(");
-        if (p1) {
-            p2 = strrstr(p1, ")");
-            if (p2) {
-                snprintf(rest, 100, "%.*s", p2 - p1 - 1, p1 + 1);
-                if (strlen(p2) > 1)
-                    /* closed parens was not the last element to be parsed */
-                    /* String to be parsed is of the form ((myf) 1 2) */
-                    result = cons(_parse(rest), _parse(p2 + 1));
-                else
-                    /* String to be parsed is of the form (myf 1 2) */
-                    result = _parse(rest);
-                free(rest);
-            }
+        p1 = input;       
+        int opened = 1;
+        p2 = p1;
+        /* Find the closing parens */
+        while (opened > 0) {
+            p2++;
+            if (*p2 == '(')
+                opened++;
+            else if (*p2 == ')')
+                opened--;
         }
+        snprintf(rest, 100, "%.*s", p2 - p1 - 1, p1 + 1);
+        if (strlen(p2) > 1)
+            /* closed parens was not the last element to be parsed */
+            result = cons(_parse(rest), _parse(p2 + 1));
+        else
+            result = _parse(rest);
+        free(rest);
     }
     else {
         lex(end, &start, &end);
