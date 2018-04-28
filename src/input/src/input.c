@@ -57,11 +57,14 @@ static object _parse(char *input) {
             p2 = strrstr(p1, ")");
             if (p2) {
                 snprintf(rest, 100, "%.*s", p2 - p1 - 1, p1 + 1);
-                result = _parse(rest);
-                free(rest);
                 if (strlen(p2) > 1)
                     /* closed parens was not the last element to be parsed */
-                    _parse(p2 + 1);
+                    /* String to be parsed is of the form ((myf) 1 2) */
+                    result = cons(_parse(rest), _parse(p2 + 1));
+                else
+                    /* String to be parsed is of the form (myf 1 2) */
+                    result = _parse(rest);
+                free(rest);
             }
         }
     }
