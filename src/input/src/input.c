@@ -1,10 +1,24 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 #include "base.h"
-#include "input.h"
 
-/* Stolen from https://stackoverflow.com/questions/31798297/tokenizing-an-s-expression-in-c */
-static int lex(char *str, char **start, char **end)
+char* strrstr(const char *haystack, const char *needle)
+{
+    char *r = NULL;
+
+    if (!needle[0])
+        return (char*)haystack + strlen(haystack);
+    while (1) {
+        char *p = strstr(haystack, needle);
+        if (!p)
+            return r;
+        r = p;
+        haystack = p + 1;
+    }
+}
+
+int lex(char *str, char **start, char **end)
 {
     const char *ws = " \t\r\n";
     const char *delim = "() \t\r\n";
@@ -23,32 +37,58 @@ static int lex(char *str, char **start, char **end)
     return 0;
 }
 
-static object object_from_token(char *token) {
-    object o;
-    if (is_number(token))
-        o = new_number(atoi(token));
-    if (is_identifier(token))
-    if (is_string(token))
-        o = new_string(token);
-    else
-        o = new_string(token);
-    return o;
+void extract(char *token, char *start, char *end) {
+    snprintf(token, 100, "%.*s", (int)(end - start), start);
 }
 
-object parse_expression(char *input) {
-    char *lex_string;           /* will contain the whole remaining string */
-    char *token;
-    object o;
-    char *p = input;
+static object _parse(char *input) {
+    object result, this, next;
+    char *start;
+    char *token = malloc(100);
+    char *end = input;
+    char *ws = " \t\r\n";
     
-    lex(p, &lex_string, &p);
-    while(lex_string) {
-        /* Get the actual token */
-        snprintf(token, 100, "%.*s", (int)(p - lex_string), lex_string);
-        o = object_from_token(token);
-        if (0 == strcmp(token, "("))
-            
-        lex(p, &lex_string, &p);
+    input += strspn(input, ws);
+    if (*input == '(') {
+        char *p1, *p2, *rest;
+        rest = malloc(100);
+        p1 = strstr(input, "(");
+        if (p1) {
+            p2 = strrstr(p1, ")");
+            if (p2) {
+                snprintf(rest, 100, "%.*s", p2 - p1 - 1, p1 + 1);
+                result = _parse(rest);
+                free(rest);
+                if (strlen(p2) > 1)
+                    /* closed parens was not the last element to be parsed */
+                    _parse(p2 + 1);
+            }
+        }
     }
-    
+    else {
+        lex(end, &start, &end);
+        if (start != NULL)
+        {
+            extract(token, start, end);
+            this = object_from_token(token);
+            result = cons(this, _parse(end));
+            /* next = parse(end); */
+            /* if (nil != next) */
+            /*     result = cons(this, next); */
+            /* else */
+            /*     result = this; */
+        }
+        else
+            result = nil;
+    }
+    free(token);
+    return result;
+}
+
+object parse(char *input) {
+    if (*input != '(')
+        /* For expressions like "5" or "myvar" */
+        return object_from_token(input);
+    /* For expressions with conses, like "(myf 4)" */
+    return _parse(input);
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "base.h"
 
 typedef enum {
@@ -31,8 +32,45 @@ static object new_object(Tobject T, void *slot_1, void *slot_2) {
     return o;
 }
 
+bool null_object(object o) {
+    return o == nil;
+}
+
 object cons(object car, object cdr) {
     return new_object(Tcons_cell, (void *)car, (void *)cdr);
+}
+
+bool number_token_p(char *token) {
+    bool result = true;
+    for (int i = 0; i < strlen(token); i++) {
+        if (!isdigit(token[i]))
+            result = false;
+    }
+    return result;
+}
+
+bool string_token_p(char *token) {
+    size_t len;
+    if ((token[0] == '"') && (token[len-1] == '"'))
+        return true;
+    return false;
+}
+
+bool null_object_token_p(char *token) {
+    return (strcmp(token, "nil") == 0);
+}
+
+object object_from_token(char *token) {
+    object o;
+    if (number_token_p(token))
+        o = new_number(atoi(token));
+    /* else if (string_token_p(token)) */
+    /*     o = new_string(token); */
+    else if (null_object_token_p(token))
+        o = nil;
+    else
+        o = new_identifier(token);
+    return o;
 }
 
 bool is_cons(object o) {

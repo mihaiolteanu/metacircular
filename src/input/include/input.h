@@ -4,6 +4,6 @@
 #include "base.h"
 
 /* Creates an object based on expressions of type (+ 3 4) */
-extern object parse_expression(char *expr);
+extern object parse(char *expr);
 
 #endif
