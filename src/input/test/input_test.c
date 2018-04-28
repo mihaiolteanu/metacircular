@@ -66,3 +66,28 @@ void test_parse_embedded_middle_list(void) {
     object cdddr = cdr(cdr(cdr(o)));
     TEST_ASSERT_TRUE(null_object(cdddr));
 }
+
+void test_parse_multiple_embedded_lists(void) {
+    object o = parse("(lambda (x) (+ x 1))");
+    TEST_ASSERT_NOT_NULL(o);
+    object car_o = car(o);
+    TEST_ASSERT_TRUE(is_identifier(car_o));
+    TEST_ASSERT_EQUAL_STRING("lambda", identifier_name(car_o));
+    object caadr = car(car(cdr(o)));
+    TEST_ASSERT_TRUE(is_identifier(caadr));
+    TEST_ASSERT_EQUAL_STRING("x", identifier_name(caadr));
+    object cddr = cdr(cdr(o));
+    object caaddr = car(car(cddr));
+    TEST_ASSERT_TRUE(is_identifier(caaddr));
+    TEST_ASSERT_EQUAL_STRING("+", identifier_name(caaddr));
+    object cadaddr = car(cdr(car(cdr(cdr(o)))));
+    TEST_ASSERT_TRUE(is_identifier(cadaddr));
+    TEST_ASSERT_EQUAL_STRING("x", identifier_name(cadaddr));
+    object caddaddr = car(cdr(cdr(car(cdr(cdr(o))))));
+    TEST_ASSERT_TRUE(is_number(caddaddr));
+    TEST_ASSERT_EQUAL(1, number_value(caddaddr));
+    object cdddaddr = cdr(cdr(cdr(car(cdr(cdr(o))))));
+    TEST_ASSERT_TRUE(null_object(cdddaddr));
+    object cdddr = cdr(cdr(cdr(o)));
+    TEST_ASSERT_TRUE(null_object(cdddr));
+}
