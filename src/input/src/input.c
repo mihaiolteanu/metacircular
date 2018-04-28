@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdbool.h>
-#include "object.h"
+#include "base.h"
 #include "input.h"
 
 /* Stolen from https://stackoverflow.com/questions/31798297/tokenizing-an-s-expression-in-c */

@@ -3,7 +3,7 @@ project(input C)
 include(create_test)
 
 add_library(input src/input.c)
-target_link_libraries(input object)
+target_link_libraries(input base)
 target_include_directories(input PUBLIC  include)
 target_include_directories(input PRIVATE src)
 
