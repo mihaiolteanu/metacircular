@@ -64,9 +64,16 @@ static object _parse(char *input) {
                 opened--;
         }
         snprintf(rest, 100, "%.*s", p2 - p1 - 1, p1 + 1);
-        if (strlen(p2) > 1)
+        if (strlen(p2) > 1) {
             /* closed parens was not the last element to be parsed */
-            result = cons(_parse(rest), _parse(p2 + 1));
+            p2++;
+            p2 += strspn(p2, ws);
+            if (*p2 != '(')
+                /* nil object will be consed by the _parse else branch */
+                result = cons(_parse(rest), _parse(p2));
+            else
+                result = cons(_parse(rest), cons(_parse(p2), nil));
+        }
         else
             result = _parse(rest);
         free(rest);
