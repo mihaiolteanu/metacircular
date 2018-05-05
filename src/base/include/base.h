@@ -18,6 +18,13 @@ extern object object_from_token(char *token);
 extern bool   is_cons(object o);
 extern object car (object o);
 extern object cdr (object o);
+extern object cadr (object o);
+extern object caddr (object o);
+extern object cadddr (object o);
+extern object caadr (object o);
+extern object cddr (object o);
+extern object caar (object o);
+extern object cdddr (object o);
 extern unsigned int length(object list);
 
 /* Numbers and arithmetic on numbers. */

@@ -90,6 +90,34 @@ object cdr(object o) {
     exit(1);
 }
 
+object cadr (object o) {
+    return car(cdr(o));
+}
+
+object caddr (object o) {
+    return car(cdr(cdr(o)));
+}
+
+object cadddr (object o) {
+    return car(cdr(cdr(cdr(o))));
+}
+
+object caadr (object o) {
+    return car(car(cdr(o)));
+}
+
+object cddr (object o) {
+    return cdr(cdr(o));
+}
+
+object caar (object o) {
+    return car(car(o));
+}
+
+object cdddr (object o) {
+    return cdr(cdr(cdr(o)));
+}
+
 unsigned int length(object list) {
     unsigned int res = 0;
     while (nil != list) {
