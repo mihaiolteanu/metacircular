@@ -1,31 +1,18 @@
 #include "unity.h"
 #include "evaluator.h"
+#include "input.h"
 
 void test_eval_definition() {
-    object def = new_identifier("define");
-    object speed = new_identifier("speed");
-    object kmph = new_number(100);
-    /* '(define speed 100) */
-    object def_expr = cons(def, cons(speed, cons(kmph, nil)));
+    object def_expr = parse("(define speed 100)");
     environment env = extend_environment(null_environment);
     eval(def_expr, env);
-
     object o = find("speed", env);
     TEST_ASSERT_NOT_NULL(o);
     TEST_ASSERT_EQUAL(100, number_value(o));
 }
 
 void test_eval_lambda() {
-    object lmbda_id = new_identifier("lambda");
-    object x = new_identifier("x");
-    object y = new_identifier("y");
-    object z = new_identifier("z");
-    object plus = new_identifier("+");
-    /* (+ x y z)' */
-    object body = cons(plus, (cons (x, cons(y, cons(z, nil)))));
-    /* (lambda (x y z) (+ x y z)) */
-    object lmbda = cons(lmbda_id,
-                        cons(cons (x, cons(y, cons(z, nil))), cons(body, nil)));
+    object lmbda = parse("(lambda (x y z) (+ x y z))");
     environment env = extend_environment(null_environment);
 
     object evaled = eval(lmbda, env);
@@ -37,6 +24,12 @@ void test_eval_lambda() {
     TEST_ASSERT_EQUAL_STRING("y", formal_args[1]);
     TEST_ASSERT_EQUAL_STRING("z", formal_args[2]);
 
-    object *body_expected = body_lambda(evaled);
-    TEST_ASSERT_EQUAL(body, body_expected[0]);
+    object body_expected = body_lambda(evaled)[0];
+    object car_body = car(body_expected);
+    TEST_ASSERT_TRUE(is_identifier(car_body));
+    TEST_ASSERT_EQUAL_STRING("+", identifier_name(car_body));
+    object cadr_body = car(cdr(body_expected));
+    TEST_ASSERT_TRUE(is_identifier(cadr_body));
+    TEST_ASSERT_EQUAL_STRING("x", identifier_name(cadr_body));
+    /* TEST_ASSERT_EQUAL(body, body_expected[0]); */
 }
