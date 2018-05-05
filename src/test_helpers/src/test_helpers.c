@@ -6,9 +6,9 @@ void number_test(object o, int expected) {
     TEST_ASSERT_EQUAL(expected, number_value(o));
 }
 
-void identifier_test(object o, char *expected) {
-    TEST_ASSERT_TRUE(is_identifier(o));
-    TEST_ASSERT_EQUAL_STRING(expected, identifier_name(o));
+void symbol_test(object o, char *expected) {
+    TEST_ASSERT_TRUE(is_symbol(o));
+    TEST_ASSERT_EQUAL_STRING(expected, symbol_name(o));
 }
 
 void null_object_test(object o) {

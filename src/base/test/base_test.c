@@ -23,7 +23,7 @@ void test_is_cons() {
 
 void test_list_length() {
     /* '(+ 1 2)' */
-    object id = new_identifier("+");
+    object id = new_symbol("+");
     object n1 = new_number(1);
     object n2 = new_number(2);
     object addition = cons(id, cons(n1, cons(n2, nil)));
@@ -51,9 +51,9 @@ void test_number_add_numbers() {
     number_test(sum, 10);
 }
 
-void test_new_identifier() {
-    object id = new_identifier("define");
-    identifier_test(id, "define");
+void test_new_symbol() {
+    object id = new_symbol("define");
+    symbol_test(id, "define");
 }
 
 void test_extend_the_null_environment(void) {

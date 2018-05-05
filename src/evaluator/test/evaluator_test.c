@@ -26,10 +26,10 @@ void test_eval_lambda() {
 
     object body_expected = body_lambda(evaled)[0];
     object car_body = car(body_expected);
-    TEST_ASSERT_TRUE(is_identifier(car_body));
-    TEST_ASSERT_EQUAL_STRING("+", identifier_name(car_body));
+    TEST_ASSERT_TRUE(is_symbol(car_body));
+    TEST_ASSERT_EQUAL_STRING("+", symbol_name(car_body));
     object cadr_body = car(cdr(body_expected));
-    TEST_ASSERT_TRUE(is_identifier(cadr_body));
-    TEST_ASSERT_EQUAL_STRING("x", identifier_name(cadr_body));
+    TEST_ASSERT_TRUE(is_symbol(cadr_body));
+    TEST_ASSERT_EQUAL_STRING("x", symbol_name(cadr_body));
     /* TEST_ASSERT_EQUAL(body, body_expected[0]); */
 }

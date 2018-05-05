@@ -33,17 +33,17 @@ extern bool   is_number(object o);
 extern int    number_value(object o);
 extern object add_numbers(object o1, object o2);
 
-/* Identifiers and definitions. */
-/* Create a new identifier object and assign it the given object in the given environment. */
+/* Symbols and definitions. */
+/* Create a new symbol object and assign it the given object in the given environment. */
 extern void   define(char *name, object o, environment env);
 extern object find(char *name, environment env);
-/* Reasign the given identifier to point to a new object in the given environment. */
-extern void   redefine(object identifier, object o, environment env);
-/* Create a new identifier but don't assign it to anything yet. */
-extern object new_identifier(char *name);
-extern bool   is_identifier(object o);
-extern char  *identifier_name(object o);
-extern object identifier_object(object identifier);
+/* Reasign the given symbol to point to a new object in the given environment. */
+extern void   redefine(object symbol, object o, environment env);
+/* Create a new symbol but don't assign it to anything yet. */
+extern object new_symbol(char *name);
+extern bool   is_symbol(object o);
+extern char  *symbol_name(object o);
+extern object symbol_object(object symbol);
 
 /* Environments. */
 extern environment extend_environment(environment base_env);

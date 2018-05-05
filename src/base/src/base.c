@@ -9,7 +9,7 @@ typedef enum {
     Tcons_cell,
     Tnumber,
     Tfunction,
-    Tidentifier,
+    Tsymbol,
     Tnull,
 } Tobject;
 
@@ -69,7 +69,7 @@ object object_from_token(char *token) {
     else if (null_object_token_p(token))
         o = nil;
     else
-        o = new_identifier(token);
+        o = new_symbol(token);
     return o;
 }
 
@@ -127,12 +127,12 @@ unsigned int length(object list) {
     return res;
 }
 
-typedef struct identifier__ {
+typedef struct symbol__ {
     char *name;
     object o;
-    struct identifier__ *next;  /* Helpful to store multiple identifiers in environments. */
-} identifier_;
-typedef identifier_ *identifier;
+    struct symbol__ *next;  /* Helpful to store multiple symbols in environments. */
+} symbol_;
+typedef symbol_ *symbol;
 
 typedef struct {
     char **formal_args;
@@ -142,82 +142,82 @@ typedef struct {
 typedef function_ *function;
 
 typedef struct environment__ {
-    identifier id_list;             /* Each environment has a list of identifiers */
+    symbol symbol_list;             /* Each environment has a list of symbols */
     struct environment__ *next;      /* Enclosing frames for the current environment */
 } environment_;
 environment null_environment = NULL;
 
 /* Associate a name with an object. */
-static identifier new_id(char *name, object o) {
-    identifier id = malloc(sizeof(identifier_));
-    id->name = malloc(strlen(name));
-    strcpy(id->name, name);
-    id->o = o;
-    id->next = NULL;
-    return id;
+static symbol new_id(char *name, object o) {
+    symbol symbol = malloc(sizeof(symbol_));
+    symbol->name = malloc(strlen(name));
+    strcpy(symbol->name, name);
+    symbol->o = o;
+    symbol->next = NULL;
+    return symbol;
 }
 
-static void store(identifier id, environment env) {
-    identifier *id_list = &(env->id_list);
+static void store(symbol psymbol, environment env) {
+    symbol *symbol_list = &(env->symbol_list);
     /* Add the new symbol to the end of the symbols list */
-    if (NULL != *id_list) {
-        while (NULL != (*id_list)->next)
-            id_list = &((*id_list)->next);
-        (*id_list)->next = id;
+    if (NULL != *symbol_list) {
+        while (NULL != (*symbol_list)->next)
+            symbol_list = &((*symbol_list)->next);
+        (*symbol_list)->next = psymbol;
     }
     else
         /* First symbol in the environment */
-        *id_list = id;
+        *symbol_list = psymbol;
 }
 
 void define(char *name, object o, environment env) {
-    identifier id = new_id(name, o);
+    symbol symbol = new_id(name, o);
     if (is_lambda(o))
         /* Attach an environment to lambda making this a function definition. */
         ((function)(o->slot_1))->env = env;
-    store(id, env);
+    store(symbol, env);
 }
 
-object new_identifier(char *name) {
-    identifier id = new_id(name, nil);
-    return new_object(Tidentifier, (void *)id, NULL);
+object new_symbol(char *name) {
+    symbol symbol = new_id(name, nil);
+    return new_object(Tsymbol, (void *)symbol, NULL);
 }
 
 /* Search for a symbol with name in the given list of symbols. */
-static identifier find_id_in_frame(char *name, identifier ids) {
-    if ((NULL == ids) || (0 == strcmp(name, ids->name)))
-        return ids;
-    return find_id_in_frame(name, ids->next);
+static symbol find_id_in_frame(char *name, symbol symbols) {
+    if ((NULL == symbols) || (0 == strcmp(name, symbols->name)))
+        return symbols;
+    return find_id_in_frame(name, symbols->next);
 }
 
 object find(char *name, environment env) {
-    identifier res;
+    symbol res;
     if (null_environment == env)
         /* Symbol not found in any of the enclosing environments */
         return nil;
-    res = find_id_in_frame(name, env->id_list);
+    res = find_id_in_frame(name, env->symbol_list);
     if (NULL != res)
         /* Symbol found in the current frame */
         return res->o;
     return find(name, env->next);
 }
 
-bool is_identifier(object o) {
-    return is_equal_type(o->T, Tidentifier);
+bool is_symbol(object o) {
+    return is_equal_type(o->T, Tsymbol);
 }
 
-char *identifier_name(object o) {
-    if (is_identifier(o))
-        return ((identifier)(o->slot_1))->name;
+char *symbol_name(object o) {
+    if (is_symbol(o))
+        return ((symbol)(o->slot_1))->name;
 }
 
-object identifier_object(object identifier) {
-    return identifier->slot_1;
+object symbol_object(object symbol) {
+    return symbol->slot_1;
 }
 
 environment extend_environment(environment base_env) {
     environment env = malloc(sizeof(environment_));
-    env->id_list = NULL;
+    env->symbol_list = NULL;
     env->next = base_env;
     return env;
 }

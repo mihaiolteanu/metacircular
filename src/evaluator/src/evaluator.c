@@ -9,9 +9,9 @@ static bool is_car_name(object expr, char *name) {
     if (!is_cons(expr))
         return false;
     expr_car = car(expr);
-    if (!is_identifier(expr_car))
+    if (!is_symbol(expr_car))
         return false;
-    car_name = identifier_name(expr_car);
+    car_name = symbol_name(expr_car);
     if (0 == strcmp(car_name, name))
         return true;
     return false;
@@ -29,9 +29,9 @@ static bool is_lambda_id(object expr) {
  with the caddr object in the given environment*/
 static void eval_definition(object expr, environment env) {
     char *id_name;
-    if (!is_identifier(cadr(expr)))
+    if (!is_symbol(cadr(expr)))
         exit(1);                /* Invalid definition (e.g, (define 5 10)) */
-    id_name = identifier_name(cadr(expr));
+    id_name = symbol_name(cadr(expr));
     define(id_name, caddr(expr), env);
 }
 
@@ -44,9 +44,9 @@ static object eval_lambda(object expr) {
     char **formal_args_base = formal_args;
     while (nil != args) {
         arg = car(args);
-        if (!is_identifier(arg))
+        if (!is_symbol(arg))
             exit(1);
-        arg_name = identifier_name(arg);
+        arg_name = symbol_name(arg);
         *formal_args = arg_name;
         formal_args++;
         args = cdr(args);
