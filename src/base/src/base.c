@@ -8,7 +8,7 @@
 typedef enum {
     Tcons_cell,
     Tnumber,
-    Tfunction,
+    Tprocedure,
     Tsymbol,
     Tnull,
 } Tobject;
@@ -138,8 +138,8 @@ typedef struct {
     char **formal_args;
     object *body;               /* Multiple objects are allowed as a body */
     environment env;
-} function_;
-typedef function_ *function;
+} procedure_;
+typedef procedure_ *procedure;
 
 typedef struct environment__ {
     symbol symbol_list;             /* Each environment has a list of symbols */
@@ -172,9 +172,9 @@ static void store(symbol psymbol, environment env) {
 
 void define(char *name, object o, environment env) {
     symbol symbol = new_id(name, o);
-    if (is_lambda(o))
-        /* Attach an environment to lambda making this a function definition. */
-        ((function)(o->slot_1))->env = env;
+    if (is_procedure(o))
+        /* Attach an environment to lambda making this a procedure definition. */
+        ((procedure)(o->slot_1))->env = env;
     store(symbol, env);
 }
 
@@ -222,24 +222,24 @@ environment extend_environment(environment base_env) {
     return env;
 }
 
-/* §§§ Functions */
-object new_lambda(char **formal_args, object *body) {
-    function f = malloc(sizeof(function_));
+/* §§§ Procedures */
+object new_procedure(char **formal_args, object *body) {
+    procedure f = malloc(sizeof(procedure_));
     f->formal_args = formal_args;
     f->body = body;
-    return new_object(Tfunction, (void *)f, NULL);
+    return new_object(Tprocedure, (void *)f, NULL);
 }
 
-bool is_lambda(object expr) {
-    return is_equal_type(expr->T, Tfunction);
+bool is_procedure(object expr) {
+    return is_equal_type(expr->T, Tprocedure);
 }
 
-char **formal_args_lambda(object lambda) {
-    return ((function)(lambda->slot_1))->formal_args;
+char **formal_args_procedure(object proc) {
+    return ((procedure)(proc->slot_1))->formal_args;
 }
 
-object *body_lambda(object lambda) {
-    return ((function)(lambda->slot_1))->body;
+object *body_procedure(object proc) {
+    return ((procedure)(proc->slot_1))->body;
 }
 
 /* §§§ Numbers */

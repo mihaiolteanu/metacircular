@@ -49,9 +49,9 @@ extern object symbol_object(object symbol);
 extern environment extend_environment(environment base_env);
 
 /* Functions. */
-extern object new_lambda(char **formal_args, object *body);
-extern bool   is_lambda(object expr);
-extern char **formal_args_lambda(object lambda);
-extern object *body_lambda(object lambda);
+extern object new_procedure(char **formal_args, object *body);
+extern bool   is_procedure(object expr);
+extern char **formal_args_procedure(object procedure);
+extern object *body_procedure(object procedure);
 
 #endif

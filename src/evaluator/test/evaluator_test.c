@@ -17,14 +17,14 @@ void test_eval_lambda() {
 
     object evaled = eval(lmbda, env);
     TEST_ASSERT_NOT_NULL(evaled);
-    TEST_ASSERT_TRUE(is_lambda(evaled));
+    TEST_ASSERT_TRUE(is_procedure(evaled));
 
-    char **formal_args = formal_args_lambda(evaled);
+    char **formal_args = formal_args_procedure(evaled);
     TEST_ASSERT_EQUAL_STRING("x", formal_args[0]);
     TEST_ASSERT_EQUAL_STRING("y", formal_args[1]);
     TEST_ASSERT_EQUAL_STRING("z", formal_args[2]);
 
-    object body_expected = body_lambda(evaled)[0];
+    object body_expected = body_procedure(evaled)[0];
     object car_body = car(body_expected);
     TEST_ASSERT_TRUE(is_symbol(car_body));
     TEST_ASSERT_EQUAL_STRING("+", symbol_name(car_body));

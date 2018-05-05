@@ -25,7 +25,7 @@ static bool is_definition_id(object expr) {
     return is_car_name(expr, "define");
 }
 
-static bool is_lambda_id(object expr) {
+static bool is_procedure_id(object expr) {
     return is_car_name(expr, "lambda");
 }
 
@@ -39,7 +39,7 @@ static void eval_definition(object expr, environment env) {
     define(id_name, caddr(expr), env);
 }
 
-static object eval_lambda(object expr) {
+static object eval_procedure(object expr) {
     object arg;                 /* One argument from the list of arguments */
     char *arg_name;
     object args = car(cdr(expr)); /* arguments part of the lambda expression */
@@ -64,7 +64,7 @@ static object eval_lambda(object expr) {
         body++;
         body_entries = cdr(body_entries);
     }
-    return new_lambda(formal_args_base, body_base);
+    return new_procedure(formal_args_base, body_base);
 }
 
 object eval(object exp, environment env) {
@@ -74,7 +74,15 @@ object eval(object exp, environment env) {
         eval_definition(exp, env);
         return nil;
     }
-    if (is_lambda_id(exp)) {
-        return eval_lambda(exp);
+    if (is_procedure_id(exp)) {
+        return eval_procedure(exp);
     }
 }
+
+/* object apply(object procedure, object args) { */
+/*     if (primitive_procedure(procedure)) */
+/*         return apply_primitive_procedure(procedure, args); */
+/*     if (compound_procedure(procedure)) */
+/*         eval_sequence */
+    
+/* } */
