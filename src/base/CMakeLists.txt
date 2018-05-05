@@ -7,3 +7,4 @@ target_include_directories(base PUBLIC  include)
 target_include_directories(base PRIVATE src)
 
 create_test(base_test test/base_test.c base)
+target_link_libraries(base_test test_helpers)

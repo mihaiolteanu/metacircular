@@ -8,3 +8,4 @@ target_include_directories(input PUBLIC  include)
 target_include_directories(input PRIVATE src)
 
 create_test(input_test test/input_test.c input)
+target_link_libraries(input_test test_helpers)
