@@ -33,3 +33,9 @@ void test_eval_lambda() {
     TEST_ASSERT_EQUAL_STRING("x", symbol_name(cadr_body));
     /* TEST_ASSERT_EQUAL(body, body_expected[0]); */
 }
+
+void test_eval_self_evaluating() {
+    object o = parse("5");
+    object evaled = eval(o, extend_environment(null_environment));
+    TEST_ASSERT_EQUAL(o, evaled);
+}

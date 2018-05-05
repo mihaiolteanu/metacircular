@@ -17,6 +17,10 @@ static bool is_car_name(object expr, char *name) {
     return false;
 }
 
+static bool is_self_evaluating(object exp) {
+    return is_number(exp);
+}
+
 static bool is_definition_id(object expr) {
     return is_car_name(expr, "define");
 }
@@ -63,12 +67,14 @@ static object eval_lambda(object expr) {
     return new_lambda(formal_args_base, body_base);
 }
 
-object eval(object expr, environment env) {
-    if (is_definition_id(expr)) {
-        eval_definition(expr, env);
+object eval(object exp, environment env) {
+    if (is_self_evaluating(exp))
+        return exp;
+    if (is_definition_id(exp)) {
+        eval_definition(exp, env);
         return nil;
     }
-    if (is_lambda_id(expr)) {
-        return eval_lambda(expr);
+    if (is_lambda_id(exp)) {
+        return eval_lambda(exp);
     }
 }
