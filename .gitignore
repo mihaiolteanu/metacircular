@@ -5,3 +5,7 @@ Testing/*
 *_Runner.c
 mock_*.c
 mock_*.h
+
+GPATH
+GRTAGS
+GTAGS
