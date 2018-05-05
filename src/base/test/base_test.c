@@ -1,4 +1,5 @@
 #include "unity.h"
+#include "test_helpers.h"
 #include "base.h"
 
 void test_cons_preserves_car_and_cdr() {
@@ -34,7 +35,7 @@ void test_list_length() {
 void test_number_object_create() {
     int value = 123;
     object o = new_number(value);
-    TEST_ASSERT_EQUAL(number_value(o), value);
+    number_test(o, 123);
 }
 
 void test_number_identification() {
@@ -47,14 +48,12 @@ void test_number_add_numbers() {
     object n1 = new_number(4);
     object n2 = new_number(6);
     object sum = add_numbers(n1, n2);
-    TEST_ASSERT_EQUAL(number_value(sum), 10);
+    number_test(sum, 10);
 }
 
 void test_new_identifier() {
     object id = new_identifier("define");
-    TEST_ASSERT_TRUE(is_identifier(id));
-    char *id_name = identifier_name(id);
-    TEST_ASSERT_EQUAL_STRING("define", id_name);
+    identifier_test(id, "define");
 }
 
 void test_extend_the_null_environment(void) {
@@ -66,9 +65,7 @@ void test_define_and_find_one_symbol_in_environment(void) {
     object x = new_number(3);
     environment env = extend_environment(null_environment);
     define("x", x, env);
-    object stored_x = find("x", env);
-    TEST_ASSERT_NOT_NULL(stored_x);
-    TEST_ASSERT_EQUAL(3, number_value(stored_x));
+    number_test(find("x", env), 3);
 }
 
 void test_define_and_find_multiple_symbols_in_environment(void) {
@@ -77,12 +74,8 @@ void test_define_and_find_multiple_symbols_in_environment(void) {
     environment env = extend_environment(null_environment);
     define("x", x, env);
     define("y", y, env);
-    object stored_x = find("x", env);
-    object stored_y = find("y", env);
-    TEST_ASSERT_NOT_NULL(stored_x);
-    TEST_ASSERT_NOT_NULL(stored_y);
-    TEST_ASSERT_EQUAL(3, number_value(stored_x));
-    TEST_ASSERT_EQUAL(5, number_value(stored_y));
+    number_test(find("x", env), 3);
+    number_test(find("y", env), 5);
 }
 
 void test_define_and_find_multiple_symbols_in_multiple_environments(void) {
@@ -94,12 +87,7 @@ void test_define_and_find_multiple_symbols_in_multiple_environments(void) {
     env = extend_environment(env);
     object y = new_number(5);
     define("y", y, env);
-
     /* Find symbols. Multiple environments have to be searched to find all of them. */
-    object stored_x = find("x", env);
-    object stored_y = find("y", env);
-    TEST_ASSERT_NOT_NULL(stored_x);
-    TEST_ASSERT_NOT_NULL(stored_y);
-    TEST_ASSERT_EQUAL(3, number_value(stored_x));
-    TEST_ASSERT_EQUAL(5, number_value(stored_y));
+    number_test(find("x", env), 3);
+    number_test(find("y", env), 5);
 }
