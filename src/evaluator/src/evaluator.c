@@ -28,15 +28,11 @@ static bool is_lambda_id(object expr) {
 /* Assuming the car of expr is "define", associate the cadr of expr 
  with the caddr object in the given environment*/
 static void eval_definition(object expr, environment env) {
-    object expr_cdr = cdr(expr);
-    object expr_cddr = cdr(expr_cdr);
-    object expr_cadr = car(expr_cdr);
-    object expr_caddr = car(expr_cddr);
     char *id_name;
-    if (!is_identifier(expr_cadr))
+    if (!is_identifier(cadr(expr)))
         exit(1);                /* Invalid definition (e.g, (define 5 10)) */
-    id_name = identifier_name(expr_cadr);
-    define(id_name, expr_caddr, env);
+    id_name = identifier_name(cadr(expr));
+    define(id_name, caddr(expr), env);
 }
 
 static object eval_lambda(object expr) {
