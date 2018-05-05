@@ -28,10 +28,8 @@ void test_parse_number(void) {
 void test_parse_single_identifier(void) {
     object o = parse("(myf)");
     not_null_object_test(o);
-    object car_o = car(o);
-    object cdr_o = cdr(o);
-    identifier_test(car_o, "myf");
-    null_object_test(cdr_o);
+    identifier_test(car(o), "myf");
+    null_object_test(cdr(o));
 }
 
 void test_parse_multiple_identifier_list(void) {
