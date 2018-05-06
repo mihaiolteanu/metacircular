@@ -53,6 +53,7 @@ extern bool   is_procedure(object expr);
 extern bool   is_primitive_procedure(object procedure);
 extern object formal_args_procedure(object procedure);
 extern object body_procedure(object procedure);
-extern object apply_primitive_procedure(object procedure, object body);
+extern object apply_primitive_procedure(object procedure, object args);
+extern void   install_primitive_procedures(environment env);
 
 #endif

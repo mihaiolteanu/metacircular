@@ -53,8 +53,19 @@ static object application_operator(object app) {
     return car(app);
 }
 
-/* Forward declaration */
-object apply(object procedure, object body);
+/* Forward declarations. */
+object apply(object procedure, object args);
+object eval(object exp, environment env);
+
+/* sybexprs might be something like (2 (- 6 5)), which should evaluate to (2 1)*/
+static object eval_subexprs(object exp, environment env) {
+    object result;
+    if (nil != exp) {
+        result = eval(exp, env);
+        return cons(result, eval_subexprs(cdr(exp), env));
+    }
+    return nil;
+}
 
 object eval(object exp, environment env) {
     if (is_self_evaluating(exp))
@@ -67,14 +78,15 @@ object eval(object exp, environment env) {
         return eval_procedure(exp);
     }
     if (is_application(exp))
-        return apply(eval(application_operator(exp), env), cdr(exp));
+        return apply(eval(application_operator(exp), env),
+                     eval_subexprs(cdr(exp), env));
     if (is_symbol(exp))
         return find(symbol_name(exp), env);
 }
 
-object apply(object procedure, object body) {
+object apply(object procedure, object args) {
     if (is_primitive_procedure(procedure))
-        return apply_primitive_procedure(procedure, body);
+        return apply_primitive_procedure(procedure, args);
     /* if (compound_procedure(procedure)) */
     /*     eval_sequence */
 }
