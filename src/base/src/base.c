@@ -9,6 +9,7 @@ typedef enum {
     Tcons_cell,
     Tnumber,
     Tprocedure,
+    Tprimitive,
     Tsymbol,
     Tnull,
 } Tobject;
@@ -135,8 +136,8 @@ typedef struct symbol__ {
 typedef symbol_ *symbol;
 
 typedef struct {
-    char **formal_args;
-    object *body;               /* Multiple objects are allowed as a body */
+    object formal_args;
+    object body;
     environment env;
 } procedure_;
 typedef procedure_ *procedure;
@@ -223,7 +224,7 @@ environment extend_environment(environment base_env) {
 }
 
 /* §§§ Procedures */
-object new_procedure(char **formal_args, object *body) {
+object new_procedure(object formal_args, object body) {
     procedure f = malloc(sizeof(procedure_));
     f->formal_args = formal_args;
     f->body = body;
@@ -234,12 +235,67 @@ bool is_procedure(object expr) {
     return is_equal_type(expr->T, Tprocedure);
 }
 
-char **formal_args_procedure(object proc) {
+object formal_args_procedure(object proc) {
     return ((procedure)(proc->slot_1))->formal_args;
 }
 
-object *body_procedure(object proc) {
+object body_procedure(object proc) {
     return ((procedure)(proc->slot_1))->body;
+}
+
+/* §§§ Primitive Procedures. */
+typedef object (*proc)(object body);
+typedef struct {
+    char *name;
+    proc  proc;
+} primitive_procedure_;
+typedef primitive_procedure_ *primitive_procedure;
+
+static object add_numbers(object body) {
+    int value = 0;
+    while (nil != body) {
+        value += number_value(car(body));
+        body = cdr(body);
+    }
+    return new_number(value);
+}
+
+static primitive_procedure_ primitive_procedures[] = {
+    {"+", add_numbers},
+    /* {"-", substract_numbers}, */
+    /* {"*", multiply_numbers}, */
+    /* {"/", divide_numbers}, */
+};
+
+static unsigned int primitive_procedures_count =
+    sizeof(primitive_procedures)/sizeof(primitive_procedures[0]);
+
+static primitive_procedure find_primitive_procedure(object procedure) {
+    primitive_procedure primitive;
+    if (is_symbol(procedure)) {
+        char *name = symbol_name(procedure);
+        for (int i=0; i<primitive_procedures_count; i++) {
+            primitive = &primitive_procedures[i];
+            if (0 == strcmp(primitive->name, name))
+                return primitive;
+        }
+    }
+    /* No primitive procedure with that name found, or the object is not a symbol */
+    return NULL;
+}
+
+bool is_primitive_procedure(object procedure) {
+    if (NULL == find_primitive_procedure(procedure))
+        return false;
+    return true;
+}
+
+object apply_primitive_procedure(object procedure, object body) {
+    primitive_procedure primitive;
+    primitive = find_primitive_procedure(procedure);
+    if (NULL != primitive)
+        return primitive->proc(body);
+    return nil;
 }
 
 /* §§§ Numbers */
@@ -261,15 +317,6 @@ bool is_number(object o) {
 int number_value(object o) {
     if (is_number(o))
         return ((number)o->slot_1)->value;
-}
-
-object add_numbers(object o1, object o2) {
-    if (is_number(o1) && is_number(o2)) {
-        return new_number(
-            number_value(o1) +
-            number_value(o2));
-    }
-    exit(1);
 }
     
 /* §§§ Nil object */

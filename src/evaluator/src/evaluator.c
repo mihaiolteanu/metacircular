@@ -29,6 +29,10 @@ static bool is_procedure_id(object expr) {
     return is_car_name(expr, "lambda");
 }
 
+static bool is_application(object expr) {
+    return (is_cons(expr) && (is_symbol(car(expr))));
+}
+
 /* Assuming the car of expr is "define", associate the cadr of expr 
  with the caddr object in the given environment*/
 static void eval_definition(object expr, environment env) {
@@ -40,32 +44,17 @@ static void eval_definition(object expr, environment env) {
 }
 
 static object eval_procedure(object expr) {
-    object arg;                 /* One argument from the list of arguments */
-    char *arg_name;
-    object args = car(cdr(expr)); /* arguments part of the lambda expression */
-    unsigned int args_count = length(args);
-    char **formal_args = malloc(args_count * sizeof(char **));
-    char **formal_args_base = formal_args;
-    while (nil != args) {
-        arg = car(args);
-        if (!is_symbol(arg))
-            exit(1);
-        arg_name = symbol_name(arg);
-        *formal_args = arg_name;
-        formal_args++;
-        args = cdr(args);
-    }
-    unsigned int body_count = length(expr) - 2;
-    object *body = malloc(body_count * sizeof(object));
-    object *body_base = body;
-    object body_entries = cdr(cdr(expr)); /* First body expression */
-    while (nil != body_entries) {
-        *body = car(body_entries);
-        body++;
-        body_entries = cdr(body_entries);
-    }
-    return new_procedure(formal_args_base, body_base);
+    /* Pass a list of formal arguments and a list of expressions (list of lists) to the
+     * new_procedure function*/
+    return new_procedure(cadr(expr), cddr(expr));
 }
+
+static object application_operator(object app) {
+    return car(app);
+}
+
+/* Forward declaration */
+object apply(object procedure, object body);
 
 object eval(object exp, environment env) {
     if (is_self_evaluating(exp))
@@ -77,12 +66,15 @@ object eval(object exp, environment env) {
     if (is_procedure_id(exp)) {
         return eval_procedure(exp);
     }
+    if (is_application(exp))
+        return apply(eval(application_operator(exp), env), cdr(exp));
+    if (is_symbol(exp))
+        return find(symbol_name(exp), env);
 }
 
-/* object apply(object procedure, object args) { */
-/*     if (primitive_procedure(procedure)) */
-/*         return apply_primitive_procedure(procedure, args); */
-/*     if (compound_procedure(procedure)) */
-/*         eval_sequence */
-    
-/* } */
+object apply(object procedure, object body) {
+    if (is_primitive_procedure(procedure))
+        return apply_primitive_procedure(procedure, body);
+    /* if (compound_procedure(procedure)) */
+    /*     eval_sequence */
+}

@@ -1,4 +1,5 @@
 #include "unity.h"
+#include "test_helpers.h"
 #include "evaluator.h"
 #include "input.h"
 
@@ -19,19 +20,17 @@ void test_eval_lambda() {
     TEST_ASSERT_NOT_NULL(evaled);
     TEST_ASSERT_TRUE(is_procedure(evaled));
 
-    char **formal_args = formal_args_procedure(evaled);
-    TEST_ASSERT_EQUAL_STRING("x", formal_args[0]);
-    TEST_ASSERT_EQUAL_STRING("y", formal_args[1]);
-    TEST_ASSERT_EQUAL_STRING("z", formal_args[2]);
-
-    object body_expected = body_procedure(evaled)[0];
-    object car_body = car(body_expected);
-    TEST_ASSERT_TRUE(is_symbol(car_body));
-    TEST_ASSERT_EQUAL_STRING("+", symbol_name(car_body));
-    object cadr_body = car(cdr(body_expected));
-    TEST_ASSERT_TRUE(is_symbol(cadr_body));
-    TEST_ASSERT_EQUAL_STRING("x", symbol_name(cadr_body));
-    /* TEST_ASSERT_EQUAL(body, body_expected[0]); */
+    object formal_args = formal_args_procedure(evaled);
+    symbol_test(car(formal_args), "x");
+    symbol_test(cadr(formal_args), "y");
+    symbol_test(caddr(formal_args), "z");
+    
+    object body = body_procedure(evaled);
+    body = car(body);           /* Only one expression inside procedure */
+    symbol_test(car(body), "+");
+    symbol_test(cadr(body), "x");
+    symbol_test(caddr(body), "y");
+    symbol_test(cadddr(body), "z");
 }
 
 void test_eval_self_evaluating() {
@@ -39,3 +38,9 @@ void test_eval_self_evaluating() {
     object evaled = eval(o, extend_environment(null_environment));
     TEST_ASSERT_EQUAL(o, evaled);
 }
+
+/* void test_apply_primitive_procedure() { */
+/*     object o = parse("(+ 2 3)"); */
+/*     object res = eval(o, extend_environment(null_environment)); */
+/*     number_test(o, 5); */
+/* } */

@@ -10,4 +10,5 @@ target_include_directories(evaluator PRIVATE src)
 create_test(evaluator_test test/evaluator_test.c evaluator)
 target_link_libraries(evaluator_test base)
 target_link_libraries(evaluator_test input)
+target_link_libraries(evaluator_test test_helpers)
 

@@ -44,13 +44,6 @@ void test_number_identification() {
     TEST_ASSERT_TRUE(is_number(o));
 }
 
-void test_number_add_numbers() {
-    object n1 = new_number(4);
-    object n2 = new_number(6);
-    object sum = add_numbers(n1, n2);
-    number_test(sum, 10);
-}
-
 void test_new_symbol() {
     object id = new_symbol("define");
     symbol_test(id, "define");

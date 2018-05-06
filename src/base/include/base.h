@@ -31,7 +31,6 @@ extern unsigned int length(object list);
 extern object new_number(int value);
 extern bool   is_number(object o);
 extern int    number_value(object o);
-extern object add_numbers(object o1, object o2);
 
 /* Symbols and definitions. */
 /* Create a new symbol object and assign it the given object in the given environment. */
@@ -49,9 +48,11 @@ extern object symbol_object(object symbol);
 extern environment extend_environment(environment base_env);
 
 /* Functions. */
-extern object new_procedure(char **formal_args, object *body);
+extern object new_procedure(object formal_args, object body);
 extern bool   is_procedure(object expr);
-extern char **formal_args_procedure(object procedure);
-extern object *body_procedure(object procedure);
+extern bool   is_primitive_procedure(object procedure);
+extern object formal_args_procedure(object procedure);
+extern object body_procedure(object procedure);
+extern object apply_primitive_procedure(object procedure, object body);
 
 #endif
