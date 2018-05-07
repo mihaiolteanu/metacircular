@@ -75,7 +75,9 @@ object object_from_token(char *token) {
 }
 
 bool is_cons(object o) {
-    return (Tcons_cell == o->T);
+    if (nil != o)
+        return (Tcons_cell == o->T);
+    return false;
 }
 
 object car(object o) {
