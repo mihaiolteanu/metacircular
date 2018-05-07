@@ -356,32 +356,45 @@ bool is_object_nil(object o) {
     return o == NULL;
 }
 
+static void append_ch(char **res, char new) {
+    **res = new;
+    *res = *res + 1;
+}
+
 /* §§§ Printing representation of conses. */
 void _stringify(object exp, char *base, char **res) {
     if (is_object_nil(exp)) {
         /* Remove the extra space, if available, e.g. (2 3) instead of (2 3 ) */
         if (*(*res - 1) == ' ')
             *res = *res - 1;
-        **res = ')';
-        *res = *res + 1;
+        append_ch(res, ')');
     }
     else if (is_cons(exp)) {
-        if (is_cons(car(exp))) {
-            **res = '(';
-            *res = *res + 1;
-        }
+        if (is_cons(car(exp)))
+            append_ch(res, '(');
         _stringify(car(exp), base, res);
-        /* Add spaces between objects. */
-        **res = ' ';
-        *res = *res + 1;
+        /* Add punctuation between objects. */
+        if (is_cons(cdr(exp)))
+            append_ch(res, ' ');
+        else
+            /* Don't add punctuation before closing parens */
+            if (!is_object_nil(cdr(exp))) 
+                *res += sprintf(*res, "%s", " . ");
         _stringify(cdr(exp), base, res);
     }
-    else if (is_number(exp)) {
-        *res += sprintf(*res, "%d", number_value(exp));
-    }
-    else if (is_symbol(exp)) {
-        strcpy(*res, symbol_name(exp));
-        *res += strlen(symbol_name(exp));
+    else {
+        bool add_closing_parens = false;
+        if ((*(*res - 1) == ' ') && (*(*res - 2) == '.'))
+            /* Number or symbol is in the cdr position */
+            add_closing_parens = true;
+        if (is_number(exp))
+            *res += sprintf(*res, "%d", number_value(exp));
+        else if (is_symbol(exp)) {
+            strcpy(*res, symbol_name(exp));
+            *res += strlen(symbol_name(exp));
+        }
+        if (true == add_closing_parens)
+            append_ch(res, ')');
     }
 }
 

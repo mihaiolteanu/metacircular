@@ -101,6 +101,12 @@ void test_printing_representation_cons_cell(void) {
     TEST_ASSERT_EQUAL_STRING("(plus 3 4)", str);
 }
 
+void test_printing_representation_dot_notation(void) {
+    object cons_cell = cons(new_number(3), new_number(4));
+    char *str = stringify(cons_cell);
+    TEST_ASSERT_EQUAL_STRING("(3 . 4)", str);
+}
+
 void test_printing_representation_embedded_conses(void) {
     object cons_cell =
         cons(new_symbol("plus"),
