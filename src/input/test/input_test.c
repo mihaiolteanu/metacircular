@@ -52,3 +52,13 @@ void test_parse_multiple_embedded_lists(void) {
     null_object_test(cdr(cdr(cdr(car(cdr(cdr(o)))))));
     null_object_test(cdddr(o));
 }
+
+void test_mytest(void) {
+    object o = parse("(+ 2 (- 4 3))");
+    not_null_object_test(o);
+    symbol_test(car(o), "+");
+    number_test(cadr(o), 2);
+    object exp = cddr(o);       /* ((- 4 3)) */
+    /* This fails with "not a symbol", as the above returns (- 4 3) and NOT ((- 4 3)) */
+    /* symbol_test(caar(exp), "-"); */
+}
