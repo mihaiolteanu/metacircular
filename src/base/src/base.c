@@ -353,3 +353,44 @@ int number_value(object o) {
 bool is_object_nil(object o) {
     return o == NULL;
 }
+
+/* §§§ Printing representation of conses. */
+void _stringify(object exp, char *base, char **res) {
+    if (is_object_nil(exp)) {
+        /* Remove the extra space, if available, e.g. (2 3) instead of (2 3 ) */
+        if (*(*res - 1) == ' ')
+            *res = *res - 1;
+        **res = ')';
+        *res = *res + 1;
+    }
+    else if (is_cons(exp)) {
+        if (is_cons(car(exp))) {
+            **res = '(';
+            *res = *res + 1;
+        }
+        _stringify(car(exp), base, res);
+        _stringify(cdr(exp), base, res);
+    }
+    else if (is_number(exp)) {
+        *res += sprintf(*res, "%d", number_value(exp));
+        /* Add spaces between objects. */
+        **res = ' ';
+        *res = *res + 1;
+    }
+    else if (is_symbol(exp)) {
+        strcpy(*res, symbol_name(exp));
+        *res += strlen(symbol_name(exp));
+        /* Add spaces between objects. */
+        **res = ' ';
+        *res = *res + 1;
+    }
+}
+
+char *stringify(object exp) {
+    char *result = malloc(100);
+    char *base = result;
+    if (is_cons(exp))
+        *result++ = '(';
+    _stringify(exp, base, &result);
+    return base;
+}

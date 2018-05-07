@@ -84,3 +84,31 @@ void test_define_and_find_multiple_symbols_in_multiple_environments(void) {
     number_test(find("x", env), 3);
     number_test(find("y", env), 5);
 }
+
+void test_printing_representation_basic(void) {
+    object x = new_number(3);
+    char *str = stringify(x);
+    TEST_ASSERT_EQUAL_STRING("3 ", str);
+}
+
+void test_printing_representation_cons_cell(void) {
+    object cons_cell =
+        cons(new_symbol("plus"),
+             cons(new_number(3),
+                  cons(new_number(4),
+                       nil)));
+    char *str = stringify(cons_cell);
+    TEST_ASSERT_EQUAL_STRING("(plus 3 4)", str);
+}
+
+void test_printing_representation_embedded_conses(void) {
+    object cons_cell =
+        cons(new_symbol("plus"),
+             (cons(new_number(3),
+                   cons(cons(new_symbol("plus"),
+                             cons(new_number(4),
+                                  cons(new_number(5), nil))),
+                        nil))));
+    char *str = stringify(cons_cell);
+    TEST_ASSERT_EQUAL_STRING("(plus 3 (plus 4 5))", str);
+}
