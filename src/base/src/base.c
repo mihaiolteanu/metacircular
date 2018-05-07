@@ -369,20 +369,17 @@ void _stringify(object exp, char *base, char **res) {
             *res = *res + 1;
         }
         _stringify(car(exp), base, res);
+        /* Add spaces between objects. */
+        **res = ' ';
+        *res = *res + 1;
         _stringify(cdr(exp), base, res);
     }
     else if (is_number(exp)) {
         *res += sprintf(*res, "%d", number_value(exp));
-        /* Add spaces between objects. */
-        **res = ' ';
-        *res = *res + 1;
     }
     else if (is_symbol(exp)) {
         strcpy(*res, symbol_name(exp));
         *res += strlen(symbol_name(exp));
-        /* Add spaces between objects. */
-        **res = ' ';
-        *res = *res + 1;
     }
 }
 

@@ -88,7 +88,7 @@ void test_define_and_find_multiple_symbols_in_multiple_environments(void) {
 void test_printing_representation_basic(void) {
     object x = new_number(3);
     char *str = stringify(x);
-    TEST_ASSERT_EQUAL_STRING("3 ", str);
+    TEST_ASSERT_EQUAL_STRING("3", str);
 }
 
 void test_printing_representation_cons_cell(void) {
