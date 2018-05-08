@@ -45,6 +45,9 @@ void test_apply_primitive_procedure() {
     object o = parse("(- 5 3)");
     object res = eval(o, env);
     number_test(res, 2);
+    o = parse("(+ 2 5)");
+    res = eval(o, env);
+    number_test(res, 7);
 }
 
 void test_apply_primitive_procedure_nested() {
