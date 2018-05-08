@@ -61,7 +61,7 @@ object eval(object exp, environment env);
 static object eval_subexprs(object exp, environment env) {
     object result;
     if (nil != exp) {
-        result = eval(exp, env);
+        result = eval(car(exp), env);
         return cons(result, eval_subexprs(cdr(exp), env));
     }
     return nil;
