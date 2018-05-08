@@ -404,5 +404,6 @@ char *stringify(object exp) {
     if (is_cons(exp))
         *result++ = '(';
     _stringify(exp, base, &result);
+    *result = '\0';
     return base;
 }
