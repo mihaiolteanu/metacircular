@@ -53,7 +53,7 @@ void test_apply_primitive_procedure() {
 void test_apply_primitive_procedure_nested() {
     environment env = extend_environment(null_environment);
     install_primitive_procedures(env);
-    object o = parse("(+ 2 (- 4 3))");
+    object o = parse("(+ 2 (- 4 3 1))");
     object res = eval(o, env);
-    number_test(res, 3);
+    number_test(res, 2);
 }

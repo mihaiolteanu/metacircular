@@ -21,6 +21,20 @@ void test_is_cons() {
     TEST_ASSERT_TRUE(is_cons(c));
 }
 
+void test_create_empty_cons() {
+    object o = cons_empty();
+    TEST_ASSERT_TRUE(is_car_empty(o));
+    TEST_ASSERT_TRUE(is_cdr_empty(o));
+}
+
+void test_add_to_empty_cons() {
+    object o = cons_empty();
+    add_car(o, new_number(5));
+    add_cdr(o, new_number(10));
+    number_test(car(o), 5);
+    number_test(cdr(o), 10);
+}
+
 void test_list_length() {
     /* '(+ 1 2)' */
     object id = new_symbol("+");

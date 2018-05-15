@@ -3,21 +3,6 @@
 #include <string.h>
 #include "base.h"
 
-char* strrstr(const char *haystack, const char *needle)
-{
-    char *r = NULL;
-
-    if (!needle[0])
-        return (char*)haystack + strlen(haystack);
-    while (1) {
-        char *p = strstr(haystack, needle);
-        if (!p)
-            return r;
-        r = p;
-        haystack = p + 1;
-    }
-}
-
 int lex(char *str, char **start, char **end)
 {
     const char *ws = " \t\r\n";
@@ -37,71 +22,81 @@ int lex(char *str, char **start, char **end)
     return 0;
 }
 
+/* Add a new cons cell to the input object, on it's car slot, if that's empty, or on it's cdr
+ * slot, if that's empty. Return the original input if none of the slots are empty */
+static object extend(object tail) {
+    object o = cons_empty();
+    if (is_car_empty(tail))
+        add_car(tail, o);
+    else if (is_cdr_empty(tail))
+        add_cdr(tail, o);
+    return o;
+}
+
+static char *ws = " \t\r\n";
+
+/* Remove parens around the input, and return the contents and the remaining string after the
+ * parens, e.g. If input is "(+ 2 3) 4", core will be "+ 2 3" and rest will be "4" */
+static void remove_parens(char *input, char **core, char **rest) {
+    char *p1, *p2;
+    int opened = 1;
+    *core = malloc(strlen(input)); /* String between the main parens */
+    p2 = p1 = input;
+    /* Find the closing parens */
+    while (opened > 0) {
+        p2++;
+        if (*p2 == '(')
+            opened++;
+        else if (*p2 == ')')
+            opened--;
+    }
+    snprintf(*core, strlen(input), "%.*s", p2 - p1 - 1, p1 + 1);
+    *rest = p2+1;               /* Return the remaining string after the closing parens */
+    
+}
+
 void extract(char *token, char *start, char *end) {
     snprintf(token, 100, "%.*s", (int)(end - start), start);
 }
 
-static object _parse(char *input) {
-    object result, this, next;
-    char *start;
-    char *token = malloc(100);
-    char *end = input;
-    char *ws = " \t\r\n";
-    
+static void _parse(object tail, char *input) {
+    object o;
     input += strspn(input, ws);
-    if (*input == '(') {
-        char *p1, *p2, *rest;
-        rest = malloc(100);
-        p1 = input;       
-        int opened = 1;
-        p2 = p1;
-        /* Find the closing parens */
-        while (opened > 0) {
-            p2++;
-            if (*p2 == '(')
-                opened++;
-            else if (*p2 == ')')
-                opened--;
-        }
-        snprintf(rest, 100, "%.*s", p2 - p1 - 1, p1 + 1);
-        if (strlen(p2) > 1) {
-            /* closed parens was not the last element to be parsed */
-            p2++;
-            p2 += strspn(p2, ws);
-            if (*p2 != '(')
-                /* nil object will be consed by the _parse else branch */
-                result = cons(_parse(rest), _parse(p2));
-            else
-                result = cons(_parse(rest), cons(_parse(p2), nil));
-        }
-        else
-            result = _parse(rest);
-        free(rest);
+    if (strlen(input) == 0)
+        add_cdr(tail, nil);
+    else if (*input == '(') {
+        char *core, *rest;
+        remove_parens(input, &core, &rest);
+        o = extend(tail);
+        _parse(o, core);
+        _parse(o, rest);
     }
     else {
+        char *end = input;
+        char *start, *token;
+        token = malloc(100);
         lex(end, &start, &end);
-        if (start != NULL)
-        {
+        if (start != NULL) {
             extract(token, start, end);
-            this = object_from_token(token);
-            result = cons(this, _parse(end));
-            /* next = parse(end); */
-            /* if (nil != next) */
-            /*     result = cons(this, next); */
-            /* else */
-            /*     result = this; */
+            object tko = object_from_token(token);
+            free(token);
+            o = extend(tail);
+            add_car(o, tko);
+            _parse(o, end);
         }
         else
-            result = nil;
+            ;
     }
-    free(token);
-    return result;
 }
 
-object parse(char *input) {
-    if (*input != '(')
+object parse(char *start) {
+    object tail = cons_empty();
+    object head = tail;
+    if (*start != '(')
         /* For expressions like "5" or "myvar" */
-        return object_from_token(input);
+        return object_from_token(start);
     /* For expressions with conses, like "(myf 4)" */
-    return _parse(input);
+    char *end = start + strlen(start) - 1;
+    _parse(tail, start);
+    return car(car(head));
 }

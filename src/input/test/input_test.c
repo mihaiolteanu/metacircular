@@ -5,6 +5,8 @@
 void test_parse_number(void) {
     object o = parse("5");
     number_test(o, 5);
+    o = parse("my_variable");
+    symbol_test(o, "my_variable");
 }
 
 void test_parse_single_symbol(void) {
@@ -54,11 +56,12 @@ void test_parse_multiple_embedded_lists(void) {
 }
 
 void test_mytest(void) {
-    object o = parse("(+ 2 (- 4 3))");
+    object o = parse("(+ 2 (- 4 3) 1)");
     not_null_object_test(o);
     symbol_test(car(o), "+");
     number_test(cadr(o), 2);
-    object exp = cddr(o);       /* ((- 4 3)) */
-    /* This fails with "not a symbol", as the above returns (- 4 3) and NOT ((- 4 3)) */
-    /* symbol_test(caar(exp), "-"); */
+    object exp = caddr(o);       /* (- 4 3) */
+    symbol_test(car(exp), "-");
+    number_test(cadr(exp), 4);
+    number_test(caddr(exp), 3);
 }

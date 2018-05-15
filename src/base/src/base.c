@@ -24,6 +24,7 @@ typedef struct object__ {
     void *slot_2;
 } object_;
 object nil;
+static object empty_slot;
 
 static object new_object(Tobject T, void *slot_1, void *slot_2) {
     object o = malloc(sizeof(object_));
@@ -39,6 +40,26 @@ bool null_object(object o) {
 
 object cons(object car, object cdr) {
     return new_object(Tcons_cell, (void *)car, (void *)cdr);
+}
+
+object cons_empty(void) {
+    return cons(empty_slot, empty_slot);
+}
+
+bool is_car_empty(object o) {
+    return ((object)car(o)) == empty_slot;
+}
+
+bool is_cdr_empty(object o) {
+    return ((object)cdr(o)) == empty_slot;
+}
+
+object add_car(object empty_cons, object new_car) {
+    empty_cons->slot_1 = new_car;
+}
+
+object add_cdr(object empty_cons, object new_cdr) {
+    empty_cons->slot_2 = new_cdr;
 }
 
 bool number_token_p(char *token) {
