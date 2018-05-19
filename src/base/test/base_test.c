@@ -64,13 +64,13 @@ void test_new_symbol() {
 }
 
 void test_extend_the_null_environment(void) {
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     TEST_ASSERT_NOT_EQUAL(env, null_environment);
 }
 
 void test_define_and_find_one_symbol_in_environment(void) {
     object x = new_number(3);
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     define("x", x, env);
     number_test(find("x", env), 3);
 }
@@ -78,7 +78,7 @@ void test_define_and_find_one_symbol_in_environment(void) {
 void test_define_and_find_multiple_symbols_in_environment(void) {
     object x = new_number(3);
     object y = new_number(5);
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     define("x", x, env);
     define("y", y, env);
     number_test(find("x", env), 3);
@@ -88,15 +88,29 @@ void test_define_and_find_multiple_symbols_in_environment(void) {
 void test_define_and_find_multiple_symbols_in_multiple_environments(void) {
     /* Define x in one environment. */
     object x = new_number(3);
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     define("x", x, env);
     /* Define y in another environment enclosing the first one. */
-    env = extend_environment(env);
+    env = extend_environment(env, nil, nil);
     object y = new_number(5);
     define("y", y, env);
     /* Find symbols. Multiple environments have to be searched to find all of them. */
     number_test(find("x", env), 3);
     number_test(find("y", env), 5);
+}
+
+void test_extend_environment_with_args(void) {
+    environment env = extend_environment(null_environment, nil, nil);
+    define("x", new_number(1), env);
+    object formal_args = cons(new_symbol("y"), cons(new_symbol("z"), nil));
+    object parameters  = cons(new_number(2), cons(new_number(3), nil));
+    environment ext_env = extend_environment(env, formal_args, parameters);
+    object x = find("x", ext_env);
+    object y = find("y", ext_env);
+    object z = find("z", ext_env);
+    number_test(x, 1);
+    number_test(y, 2);
+    number_test(z, 3);
 }
 
 void test_printing_representation_basic(void) {

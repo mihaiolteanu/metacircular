@@ -239,10 +239,32 @@ object symbol_object(object symbol) {
     return symbol->slot_1;
 }
 
-environment extend_environment(environment base_env) {
+environment extend_environment(environment base_env, object formal_args, object parameters) {
+    /* Create a new environment over the base environment*/
     environment env = malloc(sizeof(environment_));
     env->symbol_list = NULL;
     env->next = base_env;
+
+    if (null_object(formal_args) && null_object(parameters)) 
+        /* Only extend the environment, but don't add any new symbols in the new environment. */
+        return env;
+    if (null_object(formal_args) || null_object(parameters))
+        /* Wrong numbers of parameters given */
+        exit(1);
+    unsigned int len = length(formal_args);
+    if (len != length(parameters))
+        exit(1);                /* Wrong numbers of parameters given. */
+    /* Bind formal args to parameteres in the new environment. */
+    object arg, param;
+    char *arg_name;
+    for(unsigned int i = 0; i < len; i++) {
+        arg = car(formal_args);
+        param = car(parameters);
+        arg_name = symbol_name(arg);
+        define(arg_name, param, env);
+        formal_args = cdr(formal_args);
+        parameters = cdr(parameters);
+    }
     return env;
 }
 

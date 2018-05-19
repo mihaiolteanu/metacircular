@@ -52,7 +52,9 @@ extern char  *symbol_name(object o);
 extern object symbol_object(object symbol);
 
 /* Environments. */
-extern environment extend_environment(environment base_env);
+/* Extend the given environment with a new environment by pairing each formal arg symbol with
+the corresponding parameter object. */
+extern environment extend_environment(environment base_env, object formal_args, object parameters);
 
 /* Functions. */
 extern object new_procedure(object formal_args, object body);
