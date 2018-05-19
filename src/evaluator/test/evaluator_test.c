@@ -13,7 +13,7 @@ void test_eval_definition() {
 
 void test_eval_lambda() {
     object lmbda = parse("(lambda (x y z) (+ x y z))");
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
 
     object evaled = eval(lmbda, env);
     TEST_ASSERT_NOT_NULL(evaled);
@@ -34,12 +34,12 @@ void test_eval_lambda() {
 
 void test_eval_self_evaluating() {
     object o = parse("5");
-    object evaled = eval(o, extend_environment(null_environment));
+    object evaled = eval(o, extend_environment(null_environment, nil, nil));
     number_test(evaled, 5);
 }
 
 void test_apply_primitive_procedure() {
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     install_primitive_procedures(env);
     object o = parse("(- 5 3)");
     object res = eval(o, env);
@@ -50,7 +50,7 @@ void test_apply_primitive_procedure() {
 }
 
 void test_apply_primitive_procedure_nested() {
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     install_primitive_procedures(env);
     object o = parse("(+ 2 (- 4 3 1))");
     object res = eval(o, env);
@@ -58,7 +58,7 @@ void test_apply_primitive_procedure_nested() {
 }
 
 void test_apply_primitive_procedure_to_variables() {
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     install_primitive_procedures(env);
     object exp = parse("(define speed 100)");
     eval(exp, env);
