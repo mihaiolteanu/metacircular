@@ -405,7 +405,7 @@ static void append_ch(char **res, char new) {
 }
 
 /* §§§ Printing representation of conses. */
-void _stringify(object exp, char *base, char **res) {
+void _strfy(object exp, char *base, char **res) {
     if (is_object_nil(exp)) {
         /* Remove the extra space, if available, e.g. (2 3) instead of (2 3 ) */
         if (*(*res - 1) == ' ')
@@ -415,7 +415,7 @@ void _stringify(object exp, char *base, char **res) {
     else if (is_cons(exp)) {
         if (is_cons(car(exp)))
             append_ch(res, '(');
-        _stringify(car(exp), base, res);
+        _strfy(car(exp), base, res);
         /* Add punctuation between objects. */
         if (is_cons(cdr(exp)))
             append_ch(res, ' ');
@@ -423,7 +423,13 @@ void _stringify(object exp, char *base, char **res) {
             /* Don't add punctuation before closing parens */
             if (!is_object_nil(cdr(exp))) 
                 *res += sprintf(*res, "%s", " . ");
-        _stringify(cdr(exp), base, res);
+        _strfy(cdr(exp), base, res);
+    }
+    else if (is_procedure(exp)) {
+        strcpy(*res, "<procedure> ");
+        *res += strlen("<procedure> ");
+        _strfy(formal_args_procedure(exp), base, res);
+        _strfy(body_procedure(exp), base, res);
     }
     else {
         bool add_closing_parens = false;
@@ -441,7 +447,7 @@ void _stringify(object exp, char *base, char **res) {
     }
 }
 
-char *stringify(object exp) {
+char *strfy(object exp) {
     char *result = malloc(100);
     char *base = result;
     if (is_object_nil(exp)) {
@@ -451,7 +457,7 @@ char *stringify(object exp) {
     }
     if (is_cons(exp))
         *result++ = '(';
-    _stringify(exp, base, &result);
+    _strfy(exp, base, &result);
     *result = '\0';
     return base;
 }

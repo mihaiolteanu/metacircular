@@ -66,6 +66,6 @@ extern object apply_primitive_procedure(object procedure, object args);
 extern void   install_primitive_procedures(environment env);
 
 /* Printing representation */
-extern char *stringify(object exp);
+extern char *strfy(object exp);
 
 #endif

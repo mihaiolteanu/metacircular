@@ -115,7 +115,7 @@ void test_extend_environment_with_args(void) {
 
 void test_printing_representation_basic(void) {
     object x = new_number(3);
-    char *str = stringify(x);
+    char *str = strfy(x);
     TEST_ASSERT_EQUAL_STRING("3", str);
 }
 
@@ -125,13 +125,13 @@ void test_printing_representation_cons_cell(void) {
              cons(new_number(3),
                   cons(new_number(4),
                        nil)));
-    char *str = stringify(cons_cell);
+    char *str = strfy(cons_cell);
     TEST_ASSERT_EQUAL_STRING("(plus 3 4)", str);
 }
 
 void test_printing_representation_dot_notation(void) {
     object cons_cell = cons(new_number(3), new_number(4));
-    char *str = stringify(cons_cell);
+    char *str = strfy(cons_cell);
     TEST_ASSERT_EQUAL_STRING("(3 . 4)", str);
 }
 
@@ -143,6 +143,6 @@ void test_printing_representation_embedded_conses(void) {
                              cons(new_number(4),
                                   cons(new_number(5), nil))),
                         nil))));
-    char *str = stringify(cons_cell);
+    char *str = strfy(cons_cell);
     TEST_ASSERT_EQUAL_STRING("(plus 3 (plus 4 5))", str);
 }
