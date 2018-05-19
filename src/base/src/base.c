@@ -422,6 +422,11 @@ void _stringify(object exp, char *base, char **res) {
 char *stringify(object exp) {
     char *result = malloc(100);
     char *base = result;
+    if (is_object_nil(exp)) {
+        *result++ = '(';
+        *result++ = ')';
+        return base;
+    }
     if (is_cons(exp))
         *result++ = '(';
     _stringify(exp, base, &result);
