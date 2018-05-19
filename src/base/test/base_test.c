@@ -35,6 +35,16 @@ void test_add_to_empty_cons() {
     number_test(cdr(o), 10);
 }
 
+void test_last() {
+    /* '(+ 1 2)' */
+    object id = new_symbol("+");
+    object n1 = new_number(1);
+    object n2 = new_number(2);
+    object addition = cons(id, cons(n1, cons(n2, nil)));
+    object l = last(addition);
+    number_test(car(l), 2);
+}
+
 void test_list_length() {
     /* '(+ 1 2)' */
     object id = new_symbol("+");

@@ -31,6 +31,7 @@ extern object caadr (object o);
 extern object cddr (object o);
 extern object caar (object o);
 extern object cdddr (object o);
+extern object last(object o);
 extern unsigned int length(object list);
 
 

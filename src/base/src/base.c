@@ -142,6 +142,14 @@ object cdddr (object o) {
     return cdr(cdr(cdr(o)));
 }
 
+object last(object o) {
+    if (null_object(o))
+        return nil;
+    if (null_object(cdr(o)))
+        return o;
+    return last(cdr(o));
+}
+
 unsigned int length(object list) {
     unsigned int res = 0;
     while (nil != list) {
