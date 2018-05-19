@@ -8,8 +8,7 @@ void test_eval_definition() {
     environment env = extend_environment(null_environment);
     eval(def_expr, env);
     object o = find("speed", env);
-    TEST_ASSERT_NOT_NULL(o);
-    TEST_ASSERT_EQUAL(100, number_value(o));
+    number_test(o, 100);
 }
 
 void test_eval_lambda() {
@@ -36,7 +35,7 @@ void test_eval_lambda() {
 void test_eval_self_evaluating() {
     object o = parse("5");
     object evaled = eval(o, extend_environment(null_environment));
-    TEST_ASSERT_EQUAL(o, evaled);
+    number_test(evaled, 5);
 }
 
 void test_apply_primitive_procedure() {
@@ -56,4 +55,14 @@ void test_apply_primitive_procedure_nested() {
     object o = parse("(+ 2 (- 4 3 1))");
     object res = eval(o, env);
     number_test(res, 2);
+}
+
+void test_apply_primitive_procedure_to_variables() {
+    environment env = extend_environment(null_environment);
+    install_primitive_procedures(env);
+    object exp = parse("(define speed 100)");
+    eval(exp, env);
+    object o = parse("(+ speed speed)");
+    object res = eval(o, env);
+    number_test(res, 200);
 }
