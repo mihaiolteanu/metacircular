@@ -40,13 +40,18 @@ static void eval_definition(object expr, environment env) {
     if (!is_symbol(cadr(expr)))
         exit(1);                /* Invalid definition (e.g, (define 5 10)) */
     id_name = symbol_name(cadr(expr));
-    define(id_name, caddr(expr), env);
+    /* We could have a (define x (+ 2 3)), for example, so the expression after the symbol name also
+     needs to be evaluated.*/
+    object o = eval(caddr(expr), env);
+    define(id_name, o, env);
 }
 
 static object eval_procedure(object expr) {
     /* Pass a list of formal arguments and a list of expressions (list of lists) to the
      * new_procedure function*/
-    return new_procedure(cadr(expr), cddr(expr));
+    object formal_args = cadr(expr);
+    object body = cddr(expr);
+    return new_procedure(formal_args, body);
 }
 
 static object application_operator(object app) {
@@ -54,7 +59,7 @@ static object application_operator(object app) {
 }
 
 /* Forward declarations. */
-object apply(object procedure, object args);
+object apply(object procedure, object args, environment env);
 object eval(object exp, environment env);
 
 /* sybexprs might be something like (2 (- 6 5)), which should evaluate to (2 1)*/
@@ -77,16 +82,26 @@ object eval(object exp, environment env) {
     if (is_procedure_id(exp)) {
         return eval_procedure(exp);
     }
-    if (is_application(exp))
-        return apply(eval(application_operator(exp), env),
-                     eval_subexprs(cdr(exp), env));
+    if (is_application(exp)) {
+        object operator = eval(application_operator(exp), env);
+        object subexprs = eval_subexprs(cdr(exp), env);
+        return apply(operator, subexprs, env);
+    }
     if (is_symbol(exp))
         return find(symbol_name(exp), env);
 }
 
-object apply(object procedure, object args) {
+object apply(object procedure, object parameters, environment env) {
     if (is_primitive_procedure(procedure))
-        return apply_primitive_procedure(procedure, args);
-    /* if (compound_procedure(procedure)) */
-    /*     eval_sequence */
+        return apply_primitive_procedure(procedure, parameters);
+    if (is_compound_procedure(procedure)) {
+        object body = body_procedure(procedure);
+        object formal_args = formal_args_procedure(procedure);
+        environment extended_env = extend_environment(env, formal_args, parameters);
+        object result = eval_subexprs(body, extended_env);
+        /* Eval all the subexpressions but return the result of the last one */
+        return car(last(result));
+    }
+    else
+        exit(1);
 }

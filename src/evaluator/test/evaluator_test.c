@@ -5,7 +5,7 @@
 
 void test_eval_definition() {
     object def_expr = parse("(define speed 100)");
-    environment env = extend_environment(null_environment);
+    environment env = extend_environment(null_environment, nil, nil);
     eval(def_expr, env);
     object o = find("speed", env);
     number_test(o, 100);
@@ -65,4 +65,16 @@ void test_apply_primitive_procedure_to_variables() {
     object o = parse("(+ speed speed)");
     object res = eval(o, env);
     number_test(res, 200);
+}
+
+void test_apply_compound_procedure() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object exp = parse("(define add_one (lambda (x) (+ x 1)))");
+    eval(exp, env);
+    object o = find("add_one", env);
+    object res = parse("(add_one 5)");
+    TEST_ASSERT_TRUE(is_compound_procedure(o));
+    object evaled = eval(res, env);
+    number_test(evaled, 6);
 }

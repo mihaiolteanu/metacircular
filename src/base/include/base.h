@@ -61,6 +61,7 @@ extern environment extend_environment(environment base_env, object formal_args, 
 extern object new_procedure(object formal_args, object body);
 extern bool   is_procedure(object expr);
 extern bool   is_primitive_procedure(object procedure);
+extern bool   is_compound_procedure(object procedure);
 extern object formal_args_procedure(object procedure);
 extern object body_procedure(object procedure);
 extern object apply_primitive_procedure(object procedure, object args);

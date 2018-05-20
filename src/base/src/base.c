@@ -376,6 +376,10 @@ bool is_primitive_procedure(object procedure) {
     return is_equal_type(procedure->T, Tprimitive);
 }
 
+bool is_compound_procedure(object procedure) {
+    return is_equal_type(procedure->T, Tprocedure);
+}
+
 object apply_primitive_procedure(object procedure, object args) {
     proc p = primitive_procedure_proc(procedure);
     return p(args);
