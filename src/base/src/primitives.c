@@ -48,11 +48,37 @@ static object substract_numbers(object body) {
     return new_number(value);
 }
 
+static object cons_primitive(object body) {
+    unsigned int len = length(body);
+    if (len < 2) {
+        exit(1);
+    } else {
+        return body;
+    }
+}
+
+static object car_primitive(object body) {
+    if (is_cons(body))
+        /* Primitive procedures receive a list of arguments on which to operate; car, operating
+           on lists, receives a list of it's argument, that is ((2 3)), for example. */
+        return car(car(body));
+    exit(1);
+}
+
+static object cdr_primitive(object body) {
+    if (is_cons(body))
+        return cadr(car(body));
+    exit(1);
+}
+
 static primitive_procedure_ primitive_procedures[] = {
     {"+", add_numbers},
     {"-", substract_numbers},
     /* {"*", multiply_numbers}, */
     /* {"/", divide_numbers}, */
+    {"cons", cons_primitive},
+    {"car", car_primitive},
+    {"cdr", cdr_primitive},
 };
 
 static unsigned int primitive_procedures_count =

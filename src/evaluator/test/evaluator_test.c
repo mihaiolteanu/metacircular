@@ -78,3 +78,30 @@ void test_apply_compound_procedure() {
     object evaled = eval(res, env);
     number_test(evaled, 6);
 }
+
+void test_evaluate_primitive_cons() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("(cons 2 3)");
+    object res = eval(o, env);
+    number_test(car(res), 2);
+    number_test(cadr(res), 3);
+    null_object_test(cddr(res));
+}
+
+void test_evaluate_primitive_car() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("(car (cons 2 3))");
+    object res = eval(o, env);
+    number_test(res, 2);
+}
+
+void test_evaluate_primitive_cdr() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("(cdr (cons 2 3))");
+    object res = eval(o, env);
+    char *str = strfy(res);
+    number_test(res, 3);
+}
