@@ -65,3 +65,9 @@ void test_mytest(void) {
     number_test(cadr(exp), 4);
     number_test(caddr(exp), 3);
 }
+
+void test_dot_notation(void) {
+    object o = parse("(3 . 4)");
+    number_test(car(o), 3);
+    number_test(cdr(o), 4);
+}

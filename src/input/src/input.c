@@ -62,8 +62,11 @@ void extract(char *token, char *start, char *end) {
 static void _parse(object tail, char *input) {
     object o;
     input += strspn(input, ws);
-    if (strlen(input) == 0)
-        add_cdr(tail, nil);
+    if (strlen(input) == 0) {
+        /* Only add the empty list (nil) is the cons is not dotted */
+        if (is_cdr_empty(tail))
+            add_cdr(tail, nil);
+    }
     else if (*input == '(') {
         char *core, *rest;
         remove_parens(input, &core, &rest);
@@ -78,11 +81,21 @@ static void _parse(object tail, char *input) {
         lex(end, &start, &end);
         if (start != NULL) {
             extract(token, start, end);
-            object tko = object_from_token(token);
-            free(token);
-            o = extend(tail);
-            add_car(o, tko);
-            _parse(o, end);
+            object tko = object_from_token(token);            
+            if (dot) {
+                add_cdr(tail, tko);
+                dot = false;    /* Get ready for the next parsing */
+            }
+            else if (0 == strcmp(token, ".")) {
+                dot = true;
+                _parse(tail, ++input);
+            }
+            else {
+                o = extend(tail);
+                add_car(o, tko);
+                _parse(o, end);
+            }
+            
         }
         else
             ;

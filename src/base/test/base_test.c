@@ -140,9 +140,8 @@ void test_printing_representation_cons_cell(void) {
 }
 
 void test_printing_representation_dot_notation(void) {
-    object cons_cell = cons(new_number(3), new_number(4));
-    char *str = strfy(cons_cell);
-    TEST_ASSERT_EQUAL_STRING("(3 . 4)", str);
+    object o = parse("(3 . 4)");
+    TEST_ASSERT_EQUAL_STRING("(3 . 4)", strfy(o));
 }
 
 void test_printing_representation_embedded_conses(void) {
