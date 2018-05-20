@@ -3,6 +3,7 @@ project(base C)
 include(create_test)
 
 add_library(base src/base.c)
+target_link_libraries(base input)
 target_include_directories(base PUBLIC  include)
 target_include_directories(base PRIVATE src)
 

@@ -1,6 +1,7 @@
 #include "unity.h"
 #include "test_helpers.h"
 #include "base.h"
+#include "input.h"
 
 void test_cons_preserves_car_and_cdr() {
     object n1 = new_number(12);
@@ -36,24 +37,14 @@ void test_add_to_empty_cons() {
 }
 
 void test_last() {
-    /* '(+ 1 2)' */
-    object id = new_symbol("+");
-    object n1 = new_number(1);
-    object n2 = new_number(2);
-    object addition = cons(id, cons(n1, cons(n2, nil)));
-    object l = last(addition);
-    number_test(car(l), 2);
+    object o = parse("(1 2 3 4 5)");
+    object l = last(o);
+    number_test(car(l), 5);
 }
 
 void test_list_length() {
-    /* '(+ 1 2)' */
-    object id = new_symbol("+");
-    object n1 = new_number(1);
-    object n2 = new_number(2);
-    object addition = cons(id, cons(n1, cons(n2, nil)));
-    unsigned int exp_len = length(addition);
-    TEST_ASSERT_EQUAL(3, exp_len);
-    TEST_ASSERT_EQUAL(0, nil);
+    object o = parse("(1 2 3 4 5)");
+    TEST_ASSERT_EQUAL(5, length(o));
 }
 
 void test_number_object_create() {
@@ -130,13 +121,8 @@ void test_printing_representation_basic(void) {
 }
 
 void test_printing_representation_cons_cell(void) {
-    object cons_cell =
-        cons(new_symbol("plus"),
-             cons(new_number(3),
-                  cons(new_number(4),
-                       nil)));
-    char *str = strfy(cons_cell);
-    TEST_ASSERT_EQUAL_STRING("(plus 3 4)", str);
+    object o = parse("(plus 3 4)");
+    TEST_ASSERT_EQUAL_STRING("(plus 3 4)", strfy(o));
 }
 
 void test_printing_representation_dot_notation(void) {
@@ -145,13 +131,6 @@ void test_printing_representation_dot_notation(void) {
 }
 
 void test_printing_representation_embedded_conses(void) {
-    object cons_cell =
-        cons(new_symbol("plus"),
-             (cons(new_number(3),
-                   cons(cons(new_symbol("plus"),
-                             cons(new_number(4),
-                                  cons(new_number(5), nil))),
-                        nil))));
-    char *str = strfy(cons_cell);
-    TEST_ASSERT_EQUAL_STRING("(plus 3 (plus 4 5))", str);
+    object o = parse("(plus 3 (plus 4 5))");
+    TEST_ASSERT_EQUAL_STRING("(plus 3 (plus 4 5))", strfy(o));
 }
