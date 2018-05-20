@@ -59,6 +59,7 @@ void extract(char *token, char *start, char *end) {
     snprintf(token, 100, "%.*s", (int)(end - start), start);
 }
 
+static bool dot = false;
 static void _parse(object tail, char *input) {
     object o;
     input += strspn(input, ws);
@@ -99,6 +100,7 @@ static void _parse(object tail, char *input) {
         }
         else
             ;
+        free(token);
     }
 }
 
