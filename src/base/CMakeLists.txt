@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 project(base C)
 include(create_test)
 
-add_library(base src/base.c src/stringify.c)
+add_library(base
+  src/base.c
+  src/stringify.c
+  src/primitives.c)
 target_link_libraries(base input)
 target_include_directories(base PUBLIC  include)
 target_include_directories(base PRIVATE src)
