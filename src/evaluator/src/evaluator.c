@@ -35,7 +35,7 @@ static bool is_application(object expr) {
 
 /* Assuming the car of expr is "define", associate the cadr of expr 
  with the caddr object in the given environment*/
-static void eval_definition(object expr, environment env) {
+static object eval_definition(object expr, environment env) {
     char *id_name;
     if (!is_symbol(cadr(expr)))
         exit(1);                /* Invalid definition (e.g, (define 5 10)) */
@@ -44,6 +44,7 @@ static void eval_definition(object expr, environment env) {
      needs to be evaluated.*/
     object o = eval(caddr(expr), env);
     define(id_name, o, env);
+    return cadr(expr);
 }
 
 static object eval_procedure(object expr) {
@@ -75,10 +76,8 @@ static object eval_subexprs(object exp, environment env) {
 object eval(object exp, environment env) {
     if (is_self_evaluating(exp))
         return exp;
-    if (is_definition_id(exp)) {
-        eval_definition(exp, env);
-        return nil;
-    }
+    if (is_definition_id(exp))
+        return eval_definition(exp, env);
     if (is_procedure_id(exp)) {
         return eval_procedure(exp);
     }
