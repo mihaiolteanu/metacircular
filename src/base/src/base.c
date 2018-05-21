@@ -38,6 +38,20 @@ object cons_empty(void) {
     return cons(empty_slot, empty_slot);
 }
 
+object empty_quote(void) {
+    return new_object(Tquote, (void *)empty_slot, (void *)empty_slot);
+}
+
+bool is_quoted(object o) {
+    if (nil != o)
+        return (Tquote == o->T);
+    return false;
+}
+
+object quote_body(object quote) {
+    return (object)car(quote);
+}
+
 bool is_car_empty(object o) {
     return ((object)car(o)) == empty_slot;
 }

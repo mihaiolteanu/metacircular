@@ -36,6 +36,13 @@ void test_add_to_empty_cons() {
     number_test(cdr(o), 10);
 }
 
+void test_create_empty_quote() {
+    object o = empty_quote();
+    TEST_ASSERT_TRUE(is_quoted(o));
+    TEST_ASSERT_TRUE(is_car_empty(o));
+    TEST_ASSERT_TRUE(is_cdr_empty(o));
+}
+
 void test_last() {
     object o = parse("(1 2 3 4 5)");
     object l = last(o);

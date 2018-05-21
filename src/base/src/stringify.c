@@ -28,6 +28,10 @@ static void _strfy(object exp, char *base, char **res) {
                 *res += sprintf(*res, "%s", " . ");
         _strfy(cdr(exp), base, res);
     }
+    else if (is_quoted(exp)) {
+        append_ch(res, '\'');
+        _strfy(quote_body(exp), base, res);
+    }
     else if (is_procedure(exp)) {
         strcpy(*res, "<procedure> ");
         *res += strlen("<procedure> ");

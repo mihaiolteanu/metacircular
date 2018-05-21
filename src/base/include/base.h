@@ -18,6 +18,9 @@ extern object object_from_token(char *token);
 extern bool   is_cons(object o);
 /* Create a cons cell, but don't assign anything to car nor cdr (i.e. leave it empty) */
 extern object cons_empty(void);
+extern object empty_quote(void);
+extern bool   is_quoted(object o);
+extern object quote_body(object quote);
 extern bool is_car_empty(object o);
 extern bool is_cdr_empty(object o);
 extern object add_car(object empty_cons, object new_car);
@@ -33,7 +36,6 @@ extern object caar (object o);
 extern object cdddr (object o);
 extern object last(object o);
 extern unsigned int length(object list);
-
 
 /* Numbers and arithmetic on numbers. */
 extern object new_number(int value);

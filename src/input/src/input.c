@@ -24,8 +24,12 @@ int lex(char *str, char **start, char **end)
 
 /* Add a new cons cell to the input object, on it's car slot, if that's empty, or on it's cdr
  * slot, if that's empty. Return the original input if none of the slots are empty */
-static object extend(object tail) {
-    object o = cons_empty();
+static object extend(object tail, bool quoted) {
+    object o;
+    if (quoted)
+        o = empty_quote();
+    else
+        o = cons_empty();
     if (is_car_empty(tail))
         add_car(tail, o);
     else if (is_cdr_empty(tail))
@@ -71,9 +75,13 @@ static void _parse(object tail, char *input) {
     else if (*input == '(') {
         char *core, *rest;
         remove_parens(input, &core, &rest);
-        o = extend(tail);
+        o = extend(tail, false);
         _parse(o, core);
         _parse(o, rest);
+    }
+    else if (*input == '\'') {
+        o = extend(tail, true);
+        _parse(o, ++input);
     }
     else {
         char *end = input;
@@ -92,11 +100,10 @@ static void _parse(object tail, char *input) {
                 _parse(tail, ++input);
             }
             else {
-                o = extend(tail);
+                o = extend(tail, false);
                 add_car(o, tko);
                 _parse(o, end);
             }
-            
         }
         else
             ;
