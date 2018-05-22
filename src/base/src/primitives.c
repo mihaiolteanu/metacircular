@@ -48,12 +48,18 @@ static object substract_numbers(object body) {
     return new_number(value);
 }
 
+static object _cons_primitive(object body) {
+    if (null_object(cdr(body)))
+        return car(body);
+    return cons(car(body), _cons_primitive(cdr(body)));
+}
+
 static object cons_primitive(object body) {
     unsigned int len = length(body);
-    if (len < 2) {
+    if (len != 2) {
         exit(1);
     } else {
-        return body;
+        return _cons_primitive(body);
     }
 }
 
@@ -67,7 +73,7 @@ static object car_primitive(object body) {
 
 static object cdr_primitive(object body) {
     if (is_cons(body))
-        return cadr(car(body));
+        return cdr(car(body));
     exit(1);
 }
 

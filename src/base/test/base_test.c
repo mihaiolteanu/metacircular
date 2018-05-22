@@ -141,3 +141,10 @@ void test_printing_representation_embedded_conses(void) {
     object o = parse("(plus 3 (plus 4 5))");
     TEST_ASSERT_EQUAL_STRING("(plus 3 (plus 4 5))", strfy(o));
 }
+
+/* void test_cons_primitive(void) { */
+/*     object o = parse("(cons 1 (cons 2 (cons 3 nil)))"); /\* (1 2 3) *\/ */
+/*     number_test(car(o), 1); */
+/*     number_test(cadr(o), 2); */
+/*     number_test(caddr(o), 3); */
+/* } */

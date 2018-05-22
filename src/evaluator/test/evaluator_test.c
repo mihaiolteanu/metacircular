@@ -85,7 +85,7 @@ void test_evaluate_primitive_cons() {
     object o = parse("(cons 2 3)");
     object res = eval(o, env);
     number_test(car(res), 2);
-    number_test(cadr(res), 3);
+    number_test(cdr(res), 3);
     null_object_test(cddr(res));
 }
 
@@ -102,7 +102,6 @@ void test_evaluate_primitive_cdr() {
     install_primitive_procedures(env);
     object o = parse("(cdr (cons 2 3))");
     object res = eval(o, env);
-    char *str = strfy(res);
     number_test(res, 3);
 }
 
