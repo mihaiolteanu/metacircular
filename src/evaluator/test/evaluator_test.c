@@ -116,3 +116,12 @@ void test_evaluate_quoted() {
     number_test(cadr(res), 3);
     null_object_test(cddr(res));
 }
+
+void test_evaluate_nil() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("nil");
+    char *str = strfy(o);
+    object res = eval(o, env);
+    null_object_test(res);
+}

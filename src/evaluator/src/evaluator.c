@@ -18,7 +18,7 @@ static bool is_car_name(object expr, char *name) {
 }
 
 static bool is_self_evaluating(object exp) {
-    return is_number(exp);
+    return null_object(exp) || is_number(exp);
 }
 
 static bool is_definition_id(object expr) {
