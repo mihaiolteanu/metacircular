@@ -4,6 +4,7 @@
 typedef enum {
     Tcons_cell,
     Tnumber,
+    Tquote,
     Tprocedure,
     Tprimitive,
     Tsymbol,

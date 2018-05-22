@@ -114,11 +114,13 @@ static void _parse(object tail, char *input) {
 object parse(char *start) {
     object tail = cons_empty();
     object head = tail;
-    if (*start != '(')
+    if ((*start != '(') && (*start != '\''))
         /* For expressions like "5" or "myvar" */
         return object_from_token(start);
     /* For expressions with conses, like "(myf 4)" */
     char *end = start + strlen(start) - 1;
     _parse(tail, start);
-    return car(car(head));
+    if (*start == '(')
+        return car(car(head));
+    return car(head);           /* for quote */
 }

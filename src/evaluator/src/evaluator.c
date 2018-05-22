@@ -76,6 +76,13 @@ static object eval_subexprs(object exp, environment env) {
 object eval(object exp, environment env) {
     if (is_self_evaluating(exp))
         return exp;
+    if (is_quoted(exp)) {
+        object body = quote_body(exp);
+        /* Quirky input parser; puts an extra cons when cons is quoted */
+        if (is_cons(body))
+            return car(body);
+        return body;
+    }
     if (is_definition_id(exp))
         return eval_definition(exp, env);
     if (is_procedure_id(exp)) {

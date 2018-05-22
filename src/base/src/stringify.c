@@ -20,7 +20,7 @@ static void _strfy(object exp, char *base, char **res) {
             append_ch(res, '(');
         _strfy(car(exp), base, res);
         /* Add punctuation between objects. */
-        if (is_cons(cdr(exp)))
+        if (is_cons(cdr(exp)) || is_quoted(cdr(exp)))
             append_ch(res, ' ');
         else
             /* Don't add punctuation before closing parens */

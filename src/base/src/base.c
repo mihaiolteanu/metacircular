@@ -112,16 +112,11 @@ Tobject type(object o) {
 }
 
 object car(object o) {
-    /* if (is_cons(o)) */
-        return (object)(o->slot_1);
-    /* fprintf(stderr, "Object is not a cons: %s at %d\n", __FILE__, __LINE__ ); */
-    /* exit(1); */
+    return (object)(o->slot_1);
 }
 
 object cdr(object o) {
-    if (is_cons(o))
-        return (object)(o->slot_2);
-    exit(1);
+    return (object)(o->slot_2);
 }
 
 object cadr (object o) {

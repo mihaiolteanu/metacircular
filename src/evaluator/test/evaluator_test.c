@@ -105,3 +105,14 @@ void test_evaluate_primitive_cdr() {
     char *str = strfy(res);
     number_test(res, 3);
 }
+
+void test_evaluate_quoted() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("'(2 3)");
+    object res = eval(o, env);
+    char *str = strfy(res);
+    number_test(car(res), 2);
+    number_test(cadr(res), 3);
+    null_object_test(cddr(res));
+}
