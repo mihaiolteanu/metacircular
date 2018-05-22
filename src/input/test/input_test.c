@@ -71,6 +71,16 @@ void test_dot_notation(void) {
     number_test(car(o), 3);
     number_test(cdr(o), 4);
 }
+
+void test_multiple_sublists(void) {
+    object o = parse("(myf ((3 4) 5))");
+    symbol_test(car(o), "myf");
+    object rest = cadr(o);    /* ((3 4) 5) */
+    number_test(caar(rest), 3);
+    number_test(cadr(car(rest)), 4);
+    number_test(cadr(rest), 5);
+}
+
 void test_quoted(void) {
     object o = parse("(cons 3 '(4 5))");
     char *str = strfy(o);
