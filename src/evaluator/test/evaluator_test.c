@@ -86,7 +86,6 @@ void test_evaluate_primitive_cons() {
     object res = eval(o, env);
     number_test(car(res), 2);
     number_test(cdr(res), 3);
-    null_object_test(cddr(res));
 }
 
 void test_evaluate_primitive_car() {
