@@ -116,6 +116,15 @@ void test_evaluate_quoted() {
     null_object_test(cddr(res));
 }
 
+void test_evaluate_nil() {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("nil");
+    char *str = strfy(o);
+    object res = eval(o, env);
+    null_object_test(res);
+}
+
 void test_less_than_primitive(void) {
     environment env = extend_environment(null_environment, nil, nil);
     install_primitive_procedures(env);
@@ -125,4 +134,20 @@ void test_less_than_primitive(void) {
     o = parse("(< 10 5)");
     res = eval(o, env);
     TEST_ASSERT_EQUAL(falsehood, res);
+}
+
+void test_eval_if_expression(void) {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object exp = parse("(define speed 10)");
+    eval(exp, env);
+    /* Consequent */
+    object o = parse("(if (< speed 100) (+ speed 50) speed)");
+    object res = eval(o, env);
+    number_test(res, 60);
+
+    /* Alternative */
+    o = parse("(if (< speed 5) (+ speed 50) speed)");
+    res = eval(o, env);
+    number_test(res, 10);
 }

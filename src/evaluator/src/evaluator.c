@@ -33,6 +33,10 @@ static bool is_application(object expr) {
     return (is_cons(expr) && (is_symbol(car(expr))));
 }
 
+static bool is_if_expression(object exp) {
+    return is_car_name(exp, "if");
+}
+
 /* Assuming the car of expr is "define", associate the cadr of expr 
  with the caddr object in the given environment*/
 static object eval_definition(object expr, environment env) {
@@ -73,6 +77,20 @@ static object eval_subexprs(object exp, environment env) {
     return nil;
 }
 
+static object eval_if_expression(object exp, environment env) {
+    object body = cdr(exp);
+    if (length(body) != 3)
+        exit(1);
+    else {
+        object condition   = car(body);
+        object consequent  = cadr(body);
+        object alternative = caddr(body);
+        if (truthhood == (eval(condition, env)))
+            return eval(consequent, env);
+        return eval(alternative, env);
+    }
+}
+
 object eval(object exp, environment env) {
     if (is_self_evaluating(exp))
         return exp;
@@ -85,6 +103,8 @@ object eval(object exp, environment env) {
     }
     if (is_definition_id(exp))
         return eval_definition(exp, env);
+    if (is_if_expression(exp))
+        return eval_if_expression(exp, env);
     if (is_procedure_id(exp)) {
         return eval_procedure(exp);
     }
