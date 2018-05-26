@@ -8,6 +8,8 @@ typedef struct environment__  *environment;
 
 /* Globals. */
 extern object nil;
+extern object truthhood;
+extern object falsehood;
 extern environment null_environment;
 
 /* Creation and manipulation of cons cells. */

@@ -77,11 +77,31 @@ static object cdr_primitive(object body) {
     exit(1);
 }
 
+static object less_than_primitive(object body) {
+    unsigned int len = length(body);
+    object first, second;
+    if ((0 == len) || (1 == len))
+        return truthhood;
+    if (2 == len)  {
+        first = car(body);
+        second = cadr(body);
+        if (is_number(first) && is_number(second)) {
+            if (number_value(first) < number_value(second))
+                return truthhood;
+            return falsehood;
+        }
+        exit(1);
+    }
+    else
+        exit(1);                /* Multiple parameters not yet implemented */
+}
+
 static primitive_procedure_ primitive_procedures[] = {
     {"+", add_numbers},
     {"-", substract_numbers},
     /* {"*", multiply_numbers}, */
     /* {"/", divide_numbers}, */
+    {"<", less_than_primitive},
     {"cons", cons_primitive},
     {"car", car_primitive},
     {"cdr", cdr_primitive},

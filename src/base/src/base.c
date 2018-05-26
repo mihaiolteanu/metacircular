@@ -15,7 +15,9 @@ typedef struct object__ {
     void *slot_1;
     void *slot_2;
 } object_;
-object nil;
+object nil       = (object)0x01;
+object truthhood = (object)0x02;
+object falsehood = (object)0x03;
 static object empty_slot;
 
 object new_object(Tobject T, void *slot_1, void *slot_2) {

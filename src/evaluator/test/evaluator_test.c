@@ -116,11 +116,13 @@ void test_evaluate_quoted() {
     null_object_test(cddr(res));
 }
 
-void test_evaluate_nil() {
+void test_less_than_primitive(void) {
     environment env = extend_environment(null_environment, nil, nil);
     install_primitive_procedures(env);
-    object o = parse("nil");
-    char *str = strfy(o);
+    object o = parse("(< 2 3)");
     object res = eval(o, env);
-    null_object_test(res);
+    TEST_ASSERT_EQUAL(truthhood, res);
+    o = parse("(< 10 5)");
+    res = eval(o, env);
+    TEST_ASSERT_EQUAL(falsehood, res);
 }
