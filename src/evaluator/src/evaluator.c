@@ -131,3 +131,10 @@ object apply(object procedure, object parameters, environment env) {
     else
         exit(1);
 }
+
+void multi_eval(object *objs, size_t count, environment env) {
+    for(size_t i = 0; i < count; i++) {
+        eval(*objs, env);
+        objs++;
+    }
+}

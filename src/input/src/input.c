@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "base.h"
 
 int lex(char *str, char **start, char **end)
@@ -123,4 +124,56 @@ object parse(char *start) {
     if (*start == '(')
         return car(car(head));
     return car(head);           /* for quote */
+}
+
+#define MAXS 256
+#define MAX_EXP 2000
+object *parse_file(char *path, size_t *count) {
+    object *objs = malloc(10*sizeof(object));
+    object *objs_base = objs;
+    object o;
+    *count = 0;
+    char line[MAXS] = {0};
+    char exp[MAX_EXP] = {0};
+    char *exp_p = exp;
+    FILE *file;
+    file = fopen(path, "r");
+    while (fgets (line, MAXS, file) != NULL) {
+        static int opened = 0;
+        char *p = line;
+        char *pp;
+        size_t len = strlen (line);
+        /* Remove newline or carriage return */
+        while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r'))
+            line[--len] = 0;
+        /* Remove redundant spaces */
+        while (isspace (*p) && isspace(*(p+1)))
+            p++;
+        /* skip comments and blank lines */
+        if ((*p == ';' && *(p+1) == ';') || !*p)
+            continue;
+
+        pp = p;
+        while(*pp != '\0') {
+            /* printf ("%c ", *pp); */
+            if (*pp == '(')
+                opened++;
+            if (*pp == ')')
+                opened--;
+            pp++;
+        }
+
+        /* Fill the expression */
+        snprintf(exp_p, MAX_EXP, "%s", p);
+        exp_p += strlen(p);
+
+        if (opened  == 0) {
+            o = parse(exp);
+            *objs = o;          /* Add to the resulting objexts */
+            objs++;
+            (*count)++;
+            exp_p = exp;        /* Get ready for the next expression. */
+        }
+    }
+    return objs_base;
 }
