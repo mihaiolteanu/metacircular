@@ -15,10 +15,13 @@ typedef struct object__ {
     void *slot_1;
     void *slot_2;
 } object_;
-object nil       = (object)0x01;
-object truthhood = (object)0x02;
-object falsehood = (object)0x03;
+
 static object empty_slot;
+object nil       = (object)0x01;
+object_ truthhood_ = {Tbool, (void *)1, (void *)NULL};
+object_ falsehood_ = {Tbool, (void *)0, (void *)NULL};
+object truthhood = &truthhood_;
+object falsehood = &falsehood_;
 
 object new_object(Tobject T, void *slot_1, void *slot_2) {
     object o = malloc(sizeof(object_));
@@ -30,6 +33,22 @@ object new_object(Tobject T, void *slot_1, void *slot_2) {
 
 bool null_object(object o) {
     return o == nil;
+}
+
+bool is_bool(object o) {
+    is_equal_type(type(o), Tbool);
+}
+
+bool is_true(object o) {
+    if (is_bool(o))
+        return o->slot_1 == (void *)0x1;
+    exit(1);
+}
+
+bool is_false(object o) {
+    if (is_bool(o))
+        return o->slot_1 == (void *)0x0;
+    exit(1);
 }
 
 object cons(object car, object cdr) {

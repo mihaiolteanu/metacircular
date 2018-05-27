@@ -15,6 +15,9 @@ extern environment null_environment;
 /* Creation and manipulation of cons cells. */
 extern void   object_init(void);
 extern bool   null_object(object o);
+extern bool   is_bool(object o);
+extern bool   is_true(object o);
+extern bool   is_false(object o);
 extern object cons(object car, object cdr);
 extern object object_from_token(char *token);
 extern bool   is_cons(object o);

@@ -85,7 +85,7 @@ static object eval_if_expression(object exp, environment env) {
         object condition   = car(body);
         object consequent  = cadr(body);
         object alternative = caddr(body);
-        if (truthhood == (eval(condition, env)))
+        if (is_true(eval(condition, env)))
             return eval(consequent, env);
         return eval(alternative, env);
     }

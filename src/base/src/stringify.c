@@ -15,6 +15,13 @@ static void _strfy(object exp, char *base, char **res) {
             *res = *res - 1;
         append_ch(res, ')');
     }
+    else if (is_bool(exp)) {
+        append_ch(res, '#');
+        if (is_true(exp))
+            append_ch(res, 't');
+        else
+            append_ch(res, 'f');
+    }
     else if (is_cons(exp)) {
         if (is_cons(car(exp)))
             append_ch(res, '(');

@@ -8,6 +8,7 @@ typedef enum {
     Tprocedure,
     Tprimitive,
     Tsymbol,
+    Tbool,
     Tnull,
 } Tobject;
 
