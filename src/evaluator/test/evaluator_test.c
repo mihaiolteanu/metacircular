@@ -159,3 +159,12 @@ void test_eval_lambda_application(void) {
     object res = eval(o, env);
     number_test(res, 5);
 }
+
+void test_eval_let_expression(void) {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("(let ((a 5) (b 10)) (+ a b))");
+    char *str = strfy(o);
+    object res = eval(o, env);
+    number_test(res, 15);
+}

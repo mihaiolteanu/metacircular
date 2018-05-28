@@ -38,6 +38,10 @@ static bool is_if_expression(object exp) {
     return is_car_name(exp, "if");
 }
 
+static bool is_let_expression(object exp) {
+    return is_car_name(exp, "let");
+}
+
 /* Assuming the car of expr is "define", associate the cadr of expr 
  with the caddr object in the given environment*/
 static object eval_definition(object expr, environment env) {
@@ -92,6 +96,43 @@ static object eval_if_expression(object exp, environment env) {
     }
 }
 
+static object eval_let_expression(object exp, environment env) {
+    /* Transform a let expression into a lambda and apply it to it's arguments. */
+    object o;
+    object formal_args_base = cons_empty();
+    object formal_args = formal_args_base;
+    object args_base = cons_empty();
+    object args = args_base;
+    object binding;
+    object params = cadr(exp);    
+    unsigned int params_count = length(params);
+    for (unsigned int i = 0; i < params_count; i++) {
+        binding = car(params);
+        if (is_car_empty(formal_args))
+            add_car(formal_args, car(binding));
+        else {
+            o = cons_empty();
+            add_car(o, car(binding));
+            add_cdr(formal_args, o);
+            formal_args = o;
+        }
+        if (is_car_empty(args))
+            add_car(args, cadr(binding));
+        else {
+            o = cons_empty();
+            add_car(o, cadr(binding));
+            add_cdr(args, o);
+            args = o;
+        }
+        params = cdr(params);
+    }
+    add_cdr(formal_args, nil);
+    add_cdr(args, nil);
+    object body = cddr(exp);
+    object new_proc = new_procedure(formal_args_base, body);
+    return apply(new_proc, args_base, env);
+}
+
 object eval(object exp, environment env) {
     if (is_self_evaluating(exp))
         return exp;
@@ -106,6 +147,8 @@ object eval(object exp, environment env) {
         return eval_definition(exp, env);
     if (is_if_expression(exp))
         return eval_if_expression(exp, env);
+    if (is_let_expression(exp))
+        return eval_let_expression(exp, env);
     if (is_procedure_id(exp)) {
         return eval_procedure(exp);
     }
