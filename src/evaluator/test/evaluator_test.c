@@ -150,3 +150,12 @@ void test_eval_if_expression(void) {
     res = eval(o, env);
     number_test(res, 10);
 }
+
+void test_eval_lambda_application(void) {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    object o = parse("((lambda (x) x) 5)");
+    char *str = strfy(o);
+    object res = eval(o, env);
+    number_test(res, 5);
+}

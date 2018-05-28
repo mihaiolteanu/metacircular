@@ -30,7 +30,8 @@ static bool is_procedure_id(object expr) {
 }
 
 static bool is_application(object expr) {
-    return (is_cons(expr) && (is_symbol(car(expr))));
+    return (is_cons(expr) &&
+            ((is_symbol(car(expr))) || (is_cons(car(expr)))));
 }
 
 static bool is_if_expression(object exp) {
