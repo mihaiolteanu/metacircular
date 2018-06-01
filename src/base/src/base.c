@@ -89,22 +89,6 @@ object add_cdr(object empty_cons, object new_cdr) {
     empty_cons->slot_2 = new_cdr;
 }
 
-bool number_token_p(char *token) {
-    bool result = true;
-    for (int i = 0; i < strlen(token); i++) {
-        if (!isdigit(token[i]))
-            result = false;
-    }
-    return result;
-}
-
-bool string_token_p(char *token) {
-    size_t len;
-    if ((token[0] == '"') && (token[len-1] == '"'))
-        return true;
-    return false;
-}
-
 bool is_car_name(object expr, char *name) {
     object expr_car;
     char *car_name;
@@ -115,6 +99,22 @@ bool is_car_name(object expr, char *name) {
         return false;
     car_name = symbol_name(expr_car);
     if (0 == strcmp(car_name, name))
+        return true;
+    return false;
+}
+
+static bool number_token_p(char *token) {
+    bool result = true;
+    for (int i = 0; i < strlen(token); i++) {
+        if (!isdigit(token[i]))
+            result = false;
+    }
+    return result;
+}
+
+static bool string_token_p(char *token) {
+    size_t len;
+    if ((token[0] == '"') && (token[len-1] == '"'))
         return true;
     return false;
 }
