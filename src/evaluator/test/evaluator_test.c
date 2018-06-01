@@ -168,3 +168,15 @@ void test_eval_let_expression(void) {
     object res = eval(o, env);
     number_test(res, 15);
 }
+
+void test_define_procedure_without_lambda(void) {
+    environment env = extend_environment(null_environment, nil, nil);
+    install_primitive_procedures(env);
+    /* Should be translated by the parser into:
+       (define myf (lambda (x y) (+ x y))) */
+    object o = parse("(define (myf x y) (+ x y))");
+    eval(o, env);
+    o = parse("(myf 5 10)");
+    object res = eval(o, env);
+    number_test(res, 15);
+}

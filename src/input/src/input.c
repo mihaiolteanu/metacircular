@@ -115,15 +115,33 @@ static void _parse(object tail, char *input) {
 object parse(char *start) {
     object tail = cons_empty();
     object head = tail;
+    object result;
     if ((*start != '(') && (*start != '\''))
         /* For expressions like "5" or "myvar" */
         return object_from_token(start);
     /* For expressions with conses, like "(myf 4)" */
-    char *end = start + strlen(start) - 1;
     _parse(tail, start);
-    if (*start == '(')
-        return car(car(head));
-    return car(head);           /* for quote */
+    if (*start == '(') {
+        result = car(car(head));
+        char *str = strfy(result);
+        /* Make possible the definition of functions without using lambda's. */
+        if (is_symbol(car(result)) &&
+            0 == strcmp(symbol_name(car(result)), "define") &&
+            is_cons(cadr(result))) {
+            object fname = caadr(result);
+            object fargs = cdr(cadr(result));
+            object body = caddr(result);
+            /* Transform the definition into a lambda definition */
+            result =
+                cons(object_from_token("define"),
+                     cons(fname,
+                          cons(cons(object_from_token("lambda"), cons(fargs, cons(body, nil))),
+                               nil)));
+        }
+    }
+    else
+        result = car(head);     /* For quoted objects */
+    return result;
 }
 
 #define MAXS 256
