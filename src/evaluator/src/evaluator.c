@@ -3,20 +3,6 @@
 #include "evaluator.h"
 #include "base.h"
 
-static bool is_car_name(object expr, char *name) {
-    object expr_car;
-    char *car_name;
-    if (!is_cons(expr))
-        return false;
-    expr_car = car(expr);
-    if (!is_symbol(expr_car))
-        return false;
-    car_name = symbol_name(expr_car);
-    if (0 == strcmp(car_name, name))
-        return true;
-    return false;
-}
-
 static bool is_self_evaluating(object exp) {
     return null_object(exp) || is_number(exp);
 }

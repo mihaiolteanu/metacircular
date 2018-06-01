@@ -105,6 +105,20 @@ bool string_token_p(char *token) {
     return false;
 }
 
+bool is_car_name(object expr, char *name) {
+    object expr_car;
+    char *car_name;
+    if (!is_cons(expr))
+        return false;
+    expr_car = car(expr);
+    if (!is_symbol(expr_car))
+        return false;
+    car_name = symbol_name(expr_car);
+    if (0 == strcmp(car_name, name))
+        return true;
+    return false;
+}
+
 bool null_object_token_p(char *token) {
     return (strcmp(token, "nil") == 0);
 }

@@ -28,6 +28,7 @@ extern bool   is_quoted(object o);
 extern object quote_body(object quote);
 extern bool is_car_empty(object o);
 extern bool is_cdr_empty(object o);
+extern bool is_car_name(object expr, char *name);
 extern object add_car(object empty_cons, object new_car);
 extern object add_cdr(object empty_cons, object new_car);
 extern object car (object o);

@@ -125,8 +125,7 @@ object parse(char *start) {
         result = car(car(head));
         char *str = strfy(result);
         /* Make possible the definition of functions without using lambda's. */
-        if (is_symbol(car(result)) &&
-            0 == strcmp(symbol_name(car(result)), "define") &&
+        if (is_car_name(result, "define") &&
             is_cons(cadr(result))) {
             object fname = caadr(result);
             object fargs = cdr(cadr(result));
