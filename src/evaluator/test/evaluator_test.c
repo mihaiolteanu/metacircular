@@ -185,11 +185,9 @@ void test_closure(void) {
     environment env = extend_environment(null_environment, nil, nil);
     install_primitive_procedures(env);
     object o = parse("(define (myf x) (lambda (y) (+ x y)))");
-                  /* /\* ---->  *\/ char *str = strfy(o); */
     eval(o, env);
     o = parse("(define add5 (myf 5))");
     eval(o, env);
-    char *str = env_strfy(env);
     o = parse("(add5 10)");
     object res = eval(o, env);
     number_test(res, 15);
