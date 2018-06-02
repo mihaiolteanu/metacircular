@@ -45,6 +45,10 @@ static void _strfy(object exp, char *base, char **res) {
         _strfy(formal_args_procedure(exp), base, res);
         _strfy(body_procedure(exp), base, res);
     }
+    else if (is_primitive_procedure(exp)) {
+        strcpy(*res, "<primitive procedure>");
+        *res += strlen("<primitive procedure>");
+    }
     else {
         bool add_closing_parens = false;
         if ((*(*res - 1) == ' ') && (*(*res - 2) == '.'))
