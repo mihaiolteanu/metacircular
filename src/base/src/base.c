@@ -263,9 +263,6 @@ static void store(symbol psymbol, environment env) {
 
 void define(char *name, object o, environment env) {
     symbol symbol = new_id(name, o);
-    if (is_procedure(o))
-        /* Attach an environment to lambda making this a procedure definition. */
-        ((procedure)(o->slot_1))->env = env;
     store(symbol, env);
 }
 
@@ -336,10 +333,11 @@ environment extend_environment(environment base_env, object formal_args, object 
 }
 
 /* §§§ Procedures */
-object new_procedure(object formal_args, object body) {
+object new_procedure(object formal_args, object body, environment env) {
     procedure f = malloc(sizeof(procedure_));
     f->formal_args = formal_args;
     f->body = body;
+    f->env = env;
     return new_object(Tprocedure, (void *)f, NULL);
 }
 
@@ -355,3 +353,11 @@ object body_procedure(object proc) {
     return ((procedure)(proc->slot_1))->body;
 }
 
+environment env_procedure(object proc) {
+    return ((procedure)(proc->slot_1))->env;
+}
+
+void append_env_procedure(object proc, environment new_env) {
+    new_env->next = env_procedure(proc);
+    ((procedure)(proc->slot_1))->env = new_env;
+}

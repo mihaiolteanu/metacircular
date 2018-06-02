@@ -42,12 +42,12 @@ static object eval_definition(object expr, environment env) {
     return cadr(expr);
 }
 
-static object eval_procedure(object expr) {
+static object eval_procedure(object expr, environment env) {
     /* Pass a list of formal arguments and a list of expressions (list of lists) to the
      * new_procedure function*/
     object formal_args = cadr(expr);
     object body = cddr(expr);
-    return new_procedure(formal_args, body);
+    return new_procedure(formal_args, body, env);
 }
 
 static object application_operator(object app) {
@@ -55,7 +55,7 @@ static object application_operator(object app) {
 }
 
 /* Forward declarations. */
-object apply(object procedure, object args, environment env);
+object apply(object procedure, object args);
 object eval(object exp, environment env);
 
 /* sybexprs might be something like (2 (- 6 5)), which should evaluate to (2 1)*/
@@ -115,8 +115,8 @@ static object eval_let_expression(object exp, environment env) {
     add_cdr(formal_args, nil);
     add_cdr(args, nil);
     object body = cddr(exp);
-    object new_proc = new_procedure(formal_args_base, body);
-    return apply(new_proc, args_base, env);
+    object new_proc = new_procedure(formal_args_base, body, env);
+    return apply(new_proc, args_base);
 }
 
 object eval(object exp, environment env) {
@@ -136,24 +136,25 @@ object eval(object exp, environment env) {
     if (is_let_expression(exp))
         return eval_let_expression(exp, env);
     if (is_procedure_id(exp)) {
-        return eval_procedure(exp);
+        return eval_procedure(exp, env);
     }
     if (is_application(exp)) {
         object operator = eval(application_operator(exp), env);
         object subexprs = eval_subexprs(cdr(exp), env);
-        return apply(operator, subexprs, env);
+        return apply(operator, subexprs);
     }
     if (is_symbol(exp))
         return find(symbol_name(exp), env);
 }
 
-object apply(object procedure, object parameters, environment env) {
+object apply(object procedure, object parameters) {
     if (is_primitive_procedure(procedure))
         return apply_primitive_procedure(procedure, parameters);
     if (is_compound_procedure(procedure)) {
         object body = body_procedure(procedure);
         object formal_args = formal_args_procedure(procedure);
-        environment extended_env = extend_environment(env, formal_args, parameters);
+        environment appl_env = env_procedure(procedure);
+        environment extended_env = extend_environment(appl_env, formal_args, parameters);
         object result = eval_subexprs(body, extended_env);
         /* Eval all the subexpressions but return the result of the last one */
         return car(last(result));
