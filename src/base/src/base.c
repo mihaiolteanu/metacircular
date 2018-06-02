@@ -204,7 +204,6 @@ typedef struct symbol__ {
     object o;
     struct symbol__ *next;  /* Helpful to store multiple symbols in environments. */
 } symbol_;
-typedef symbol_ *symbol;
 
 typedef struct {
     object formal_args;
@@ -218,6 +217,26 @@ typedef struct environment__ {
     struct environment__ *next;      /* Enclosing frames for the current environment */
 } environment_;
 environment null_environment = NULL;
+
+symbol symbol_list(environment env) {
+    return env->symbol_list;
+}
+
+symbol next_symbol(symbol s) {
+    return s->next;
+}
+
+char *s_name(symbol s) {
+    return s->name;
+}
+
+object s_object(symbol s) {
+    return s->o;
+}
+
+environment next_env(environment env) {
+    return env->next;
+}
 
 /* Associate a name with an object. */
 static symbol new_id(char *name, object o) {

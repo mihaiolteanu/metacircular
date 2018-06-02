@@ -75,3 +75,33 @@ char *strfy(object exp) {
     *result = '\0';
     return base;
 }
+
+static char *one_env_strfy(environment env) {
+    char *res = malloc(1024);
+    char *o_str;
+    symbol s = symbol_list(env);
+    while(NULL != s) {          /* Still more symbols in the symbols list */
+        strcat(res, s_name(s));
+        strcat(res, "  ");
+        o_str = strfy(s_object(s));
+        strcat(res, o_str);
+        free(o_str);
+        strcat(res, "\n");
+        s = next_symbol(s);
+    }
+    return res;
+}
+
+char *env_strfy(environment env) {
+    char *res = malloc(1024);
+    char *base = res;
+    char *s_str;
+    while (NULL != env) {       /* Still more enclosing envs */
+        s_str = one_env_strfy(env);
+        strcpy(res, s_str);
+        res += strlen(s_str);
+        free(s_str);
+        env = next_env(env);
+    }
+    return base;
+}

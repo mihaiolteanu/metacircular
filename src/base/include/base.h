@@ -5,6 +5,13 @@
 /* Types. */
 typedef struct object__       *object;
 typedef struct environment__  *environment;
+typedef struct symbol__ *symbol;
+
+extern symbol symbol_list(environment env);
+extern symbol next_symbol(symbol s);
+extern char  *s_name(symbol s);
+extern object s_object(symbol s);
+extern environment next_env(environment env);
 
 /* Globals. */
 extern object nil;
@@ -77,5 +84,6 @@ extern void   install_primitive_procedures(environment env);
 
 /* Printing representation */
 extern char *strfy(object exp);
+extern char *env_strfy(environment env);
 
 #endif
